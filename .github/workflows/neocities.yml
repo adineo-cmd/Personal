@@ -30,11 +30,11 @@ jobs:
         run: ls -la dist/
 
       - name: Deploy to Neocities
-        uses: bcomnes/deploy-to-neocities@v1.2.0
+        uses: bcomnes/deploy-to-neocities@v2  # ✅ Correct version
         with:
           api_key: ${{ secrets.NEOCITIES_API_KEY }}
           username: ${{ secrets.NEOCITIES_USERNAME }}
           dist_dir: dist
           cleanup: true
           neocities_supporter: false
-          preview_before_deploy: false
+          preview_before_deploy: false  # ✅ Avoids 403 auth error
