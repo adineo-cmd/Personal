@@ -1,12 +1,7 @@
 # robots.txt for adineo.neocities.org
 # Location: public/robots.txt
 
-# Allow all search engines
 User-agent: *
 Allow: /
-
-
 Sitemap: https://adineo.neocities.org/sitemap.xml
-
-
 Crawl-delay: 1
