@@ -32,6 +32,27 @@ export const linksData = {
       ]
     },
     {
+      title: "🌐 Secondary Websites",
+      description: "My secondary online presence (less active)",
+      links: [
+        {
+          name: "Hackerearth",
+          url: "https://www.hackerearth.com/@theadityayadav107/",
+          description: "Primarily used for pre-employment screening, technical interviews, and skill assessments."
+        },
+        {
+          name: "Unstop",
+          url: "https://unstop.com/u/adityyad40188",
+          description: "used to connect to companies with hiring through hackathons, quizzes, and competitions"
+        },
+        {
+          name: "Devpost",
+          url: "https://devpost.com/theadityayadav107",
+          description: "To showcase projects and enter competitions for prizes"
+        }
+      ]
+    },
+    {
       title: "🕸️ Web Resources",
       description: "Curated collection of developer tools, datasets, self-hosting resources, and web utilities",
       links: [
