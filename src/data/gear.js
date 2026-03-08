@@ -110,9 +110,9 @@ export const gearData = {
           children: [
             { text: "Chatgpt(rare)" },
             { text: "Claude" },
-            { text: "Z.ai" }
-            { text: "Deepseek" }
-            { text: "Qwen" }
+            { text: "Z.ai" },
+            { text: "Deepseek" },
+            { text: "Qwen" },
           ]
         },
         { text: "Terminal Multiplexer: tmux" }
