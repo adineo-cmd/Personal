@@ -57,10 +57,8 @@ export const gearData = {
       title: "Other Services",
       items: [
         { text: "Code Hosting: GitHub" },
-        { text: "Domains: Porkbun (previously Namecheap) and Duck DNS" },
-        { text: "Email: Proton Mail+SimpleLogin" },
-        { text: "Search: DuckDuckGo" },
-        { text: "SSL: Let's Encrypt and Duck DNS" },
+        { text: "Email: Google" },
+        { text: "Search: DuckDuckGo (sometimes)" },
         {
           text: "VPN:",
           children: [
@@ -86,24 +84,24 @@ export const gearData = {
       title: "General Software Tools",
       description: "Software that I use for practical purposes, mostly on my laptop.",
       items: [
-        { text: "Browser: Trivialent (previously LibreWolf)" },
+        { text: "Browser: Tor & Zen" },
         { text: "Documents: LibreOffice" },
         {
           text: "Editors:",
           children: [
-            { text: "VS Code" },
-            { text: "Wave" },
-            { text: "Zed" }
+            { text: "VS Code(mostly)" },
+            { text: "Wave(rare)" },
+            { text: "Zed(medium)" }
           ]
         },
-        { text: "Notes: Org-roam" },
-        { text: "Password Manager: KeePassXC" },
+        { text: "Notes: website itself!!!" },
+        { text: "Password Manager: google password manager" },
         { text: "Shell: bash" },
         {
           text: "Terminals:",
           children: [
-            { text: "Kitty" },
-            { text: "Alacritty" },
+            { text: "Kitty(rare)" },
+            { text: "Alacritty(rare)" },
             { text: "WezTerm" }
           ]
         },
