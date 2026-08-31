@@ -1,16 +1,16 @@
 // src/data/martial-arts/index.js
 // Auto-discovers all style files + validates schema
 
-const styleModules = import.meta.glob('./*.js', { eager: true, import: 'styleData' });
+// ✅ Import all .js files eagerly, but don't force a specific export name
+const styleModules = import.meta.glob('./*.js', { eager: true });
 
+// ✅ Extract styleData, safely ignore files that don't have it (like renderer.js)
 export const martialArtsRegistry = Object.values(styleModules)
+  .map(module => module.styleData)
   .filter(data => data?.id && data?.curriculum)
   .sort((a, b) => a.name.localeCompare(b.name));
 
-// sectionConfig has been REMOVED as it is no longer used in the new dynamic UI.
-
 export const difficultyLevels = {
-  // Updated to split 'color' into 'bg', 'text', and 'border' for the new UI cards
   beginner: { label: "Beginner", bg: "bg-green-500/10", text: "text-green-400", border: "border-green-500/30" },
   intermediate: { label: "Intermediate", bg: "bg-yellow-500/10", text: "text-yellow-400", border: "border-yellow-500/30" },
   advanced: { label: "Advanced", bg: "bg-red-500/10", text: "text-red-400", border: "border-red-500/30" },
@@ -34,9 +34,8 @@ if (process.env.NODE_ENV === 'development') {
     
     allItems.forEach(item => {
       const hasAnatomyOrProg = item.anatomy?.length || item.progression?.length;
-      const hasGrapplingData = item.grips || item.leveragePoints || item.mechanics;
+      const hasGrapplingData = item.grips || item.leveragePoints || item.leverage_points || item.mechanics;
       
-      // Only warn if it's missing BOTH striking/physical data AND grappling data
       if (!hasAnatomyOrProg && !hasGrapplingData && item.id !== 'placeholder') {
         console.warn(`⚠️ ${style.id}: "${item.name}" missing anatomy, progression, or grappling data.`);
       }
