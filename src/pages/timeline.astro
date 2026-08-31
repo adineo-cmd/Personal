@@ -2,204 +2,832 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageNavigation from '../components/PageNavigation.astro';
 import { timelineData } from '../data/content.js';
+
+// Calculate age and chapter number
+const born = 2004;
+const currentYear = new Date().getFullYear();
+const age = currentYear - born;
+const totalChapters = timelineData.length;
+
+const getBadgeLabel = (category: string): string => {
+  const labels: Record<string, string> = {
+    'education': 'Education',
+    'learning': 'Learning',
+    'project': 'Project',
+    'life': 'Life',
+    'milestone': 'Milestone'
+  };
+  return labels[category] || 'Life';
+};
+
+const getChapterNumber = (index: number): string => {
+  const roman = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+  return roman[index] || String(index + 1);
+};
+
+const getYearSubtitle = (year: string): string => {
+  const subtitles: Record<string, string> = {
+    '2026': 'Age 21–22 · Final year · Present',
+    '2025': 'Age 20–21 · 3rd Year',
+    '2024': 'Age 19–20 · 2nd Year',
+    '2023': 'Age 18–19 · College Begins',
+    '2022': 'Age 17–18 · Senior Year',
+    '2021': 'Age 16–17 · Discovery',
+    '2020': 'Age 15–16 · Pandemic Year',
+    '2019': 'Age 14–15',
+    '2013–2018': 'Age 8–14 · School Years',
+    '2012': 'Age 7–8 · The Spark',
+    '2004–2011': 'Age 0–7 · Earliest Chapters',
+    '2004': 'The Beginning'
+  };
+  return subtitles[year] || '';
+};
 ---
 
 <BaseLayout title="Timeline | Aditya Yadav" description="My timeline of achievements">
-  <>
-    <PageNavigation currentPage="timeline" />
-
-    <div 
-      class="min-h-screen relative"
-      style={{
-        backgroundImage: "url('/images/rocket.webp')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundColor: '#0f0f0f',
-      }}
-    >
-      <div class="absolute inset-0 bg-black/70"></div>
-
-      <div 
-        class="relative z-10 text-zinc-400" 
-        style="font-family: 'Courier New', Courier, monospace;"
-      >
-        <div class="py-16 px-6">
-          <div class="max-w-7xl mx-auto">
-            <div class="mb-12">
-              <h1 class="text-5xl font-serif mb-3 text-zinc-200">Timeline</h1>
-              <p class="text-zinc-500 text-base">
-                A running log of moments, milestones, and little proofs of progress.
-              </p>
-            </div>
-
-            {/* Radio buttons — must come before content for ~ selector */}
-            {timelineData.map((yearBlock) => (
-              <input 
-                type="radio" 
-                id={`year-${yearBlock.year.replace(/[^a-zA-Z0-9]/g, '-')}`} 
-                name="timeline-year" 
-                class="hidden"
-                checked={yearBlock.year === '2026'}
-              />
-            ))}
-
-            <div class="timeline-content">
-              {/* Mobile: show all */}
-              <div class="md:hidden space-y-12">
-                {timelineData.map((yearBlock) => (
-                  <div class="space-y-6">
-                    <h2 class="text-3xl text-zinc-200 font-semibold">{yearBlock.year}</h2>
-                    <div class="space-y-6">
-                      {yearBlock.events.map((event) => (
-                        <div class="flex items-start gap-4">
-                          <div class="w-3 h-3 rounded-full bg-zinc-200 mt-1.5 flex-shrink-0"></div>
-                          <div>
-                            <p class="text-xs text-zinc-600 mb-1 uppercase tracking-wider">
-                              {event.month}
-                            </p>
-                            <h3 class="text-lg text-zinc-200 leading-relaxed">
-                              {event.title}
-                              {event.detail && (
-                                <span class="text-zinc-500"> – {event.detail}</span>
-                              )}
-                            </h3>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Desktop: year selector */}
-              <div class="hidden md:flex md:flex-row gap-12">
-                <aside class="md:w-36 flex-shrink-0">
-                  <nav class="space-y-2 md:sticky md:top-24">
-                    {timelineData.map(block => (
-                      <label
-                        for={`year-${block.year.replace(/[^a-zA-Z0-9]/g, '-')}`}
-                        class="block text-left text-sm transition-colors cursor-pointer font-medium text-zinc-600 hover:text-zinc-400 py-1.5 px-3 rounded hover:bg-zinc-900/30"
-                      >
-                        {block.year}
-                      </label>
-                    ))}
-                  </nav>
-                </aside>
-
-                <main class="flex-1">
-                  <div class="relative space-y-8">
-                    {timelineData.map((yearBlock) => (
-                      <div 
-                        class="timeline-year" 
-                        data-year={yearBlock.year}
-                      >
-                        {yearBlock.events.map((event) => (
-                          <div class="flex items-start gap-4 mb-8">
-                            <div class="w-3 h-3 rounded-full bg-zinc-400 mt-1.5 flex-shrink-0"></div>
-                            <div>
-                              <p class="text-xs text-zinc-600 mb-2 uppercase tracking-wider">
-                                {event.month}
-                              </p>
-                              <h3 class="text-lg text-zinc-200 leading-relaxed">
-                                {event.title}
-                                {event.detail && (
-                                  <span class="text-zinc-500"> – {event.detail}</span>
-                                )}
-                              </h3>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                </main>
-              </div>
-            </div>
-          </div>
+  <PageNavigation currentPage="timeline" />
+  <div class="wrap">
+    <header>
+      <p class="eyebrow">Life in Chapters</p>
+      <h1>Time<span>line</span></h1>
+      <p class="hd-desc">
+        A running log of moments, milestones, and little proofs of progress. Every year a chapter, every entry a heartbeat.
+      </p>
+      
+      <div class="life-stats">
+        <div class="ls">
+          <span class="ls-num" id="ageNum">{age}</span>
+          <span class="ls-lbl">Years Lived</span>
         </div>
+        <div class="ls">
+          <span class="ls-num">{totalChapters}</span>
+          <span class="ls-lbl">Chapters</span>
+        </div>
+        <div class="ls">
+          <span class="ls-num">{timelineData.reduce((acc, block) => acc + block.events.length, 0)}</span>
+          <span class="ls-lbl">Milestones</span>
+        </div>
+        <div class="ls">
+          <span class="ls-num">2004</span>
+          <span class="ls-lbl">Born</span>
+        </div>
+      </div>
+    </header>
 
-        {/* Back Button */}
-        <div class="border-t border-zinc-800/50 py-6">
-          <div class="max-w-7xl mx-auto px-6">
-            <a
-              href="/"
-              class="flex items-center gap-2 text-zinc-500 hover:text-zinc-300 transition-colors text-sm"
+    <div class="filters">
+      <button class="fb active" type="button" data-filter="all">All</button>
+      <button class="fb f-edu" type="button" data-filter="education">Education</button>
+      <button class="fb f-proj" type="button" data-filter="project">Projects</button>
+      <button class="fb f-life" type="button" data-filter="life">Life</button>
+      <button class="fb f-learn" type="button" data-filter="learning">Learning</button>
+    </div>
+
+    <div class="tl-layout">
+      <nav class="year-nav">
+        {timelineData.map((block, idx) => {
+          const yearId = block.year.replace(/[^a-zA-Z0-9]/g, '-');
+          return (
+            <button 
+              class={`yb ${idx === 0 ? 'active' : ''}`}
+              type="button"
+              data-year={yearId}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="19" y1="12" x2="5" y2="12" />
-                <polyline points="12 19 5 12 12 5" />
-              </svg>
-              Back to Home
-            </a>
-          </div>
-        </div>
+              {block.year}
+            </button>
+          );
+        })}
+      </nav>
+
+      <div class="tl-content">
+        {timelineData.map((yearBlock, yearIndex) => {
+          const chapterNum = getChapterNumber(totalChapters - yearIndex - 1);
+          const yearId = yearBlock.year.replace(/[^a-zA-Z0-9]/g, '-');
+          
+          return (
+            <div 
+              class={`yr-section ${yearIndex === 0 ? 'vis' : ''}`} 
+              id={`y-${yearId}`}
+              data-year={yearBlock.year}
+            >
+              <div class="yr-hero">
+                <div class="yr-big">{yearBlock.year}</div>
+                <div class="yr-age">{getYearSubtitle(yearBlock.year)}</div>
+              </div>
+              
+              <div class="entries">
+                {yearBlock.events.map((event) => {
+                  const category = event.category || 'life';
+                  const badgeLabel = getBadgeLabel(category);
+                  
+                  return (
+                    <div class={`entry e-${category}`} data-category={category}>
+                      <div class="e-top">
+                        <span class="e-when">{event.month}</span>
+                        <span class={`e-badge b-${category}`}>{badgeLabel}</span>
+                      </div>
+                      <div class="e-title">{event.title}</div>
+                      <div class="e-desc">{event.detail}</div>
+                      <span class="chapter-label">Chapter {chapterNum}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {yearIndex === 0 && (
+                <div class="age-bar-wrap">
+                  <div class="ab-label">Life progress — 2004 to present</div>
+                  <div class="ab-track">
+                    <div class="ab-fill" style={`width: ${(age / 80) * 100}%`}></div>
+                  </div>
+                  <div class="ab-info">
+                    {age} of ~80 expected years · Chapter {totalChapters} of an unwritten story
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
 
-    {/* ✅ Updated CSS for ALL years including new ranges */}
-    <style>
-      @media (min-width: 768px) {
-        .timeline-year {
-          display: none;
-        }
+    <footer>
+      <span>← back to home</span>
+      <span>~/timeline · life in chapters</span>
+    </footer>
+  </div>
 
-        /* Show selected year - all years from timeline */
-        #year-2026:checked ~ .timeline-content .timeline-year[data-year="2026"] {
-          display: block;
-        }
-        #year-2025:checked ~ .timeline-content .timeline-year[data-year="2025"] {
-          display: block;
-        }
-        #year-2024:checked ~ .timeline-content .timeline-year[data-year="2024"] {
-          display: block;
-        }
-        #year-2023:checked ~ .timeline-content .timeline-year[data-year="2023"] {
-          display: block;
-        }
-        #year-2022:checked ~ .timeline-content .timeline-year[data-year="2022"] {
-          display: block;
-        }
-        #year-2021:checked ~ .timeline-content .timeline-year[data-year="2021"] {
-          display: block;
-        }
-        #year-2020:checked ~ .timeline-content .timeline-year[data-year="2020"] {
-          display: block;
-        }
-        #year-2019:checked ~ .timeline-content .timeline-year[data-year="2019"] {
-          display: block;
-        }
-        #year-2013-2018:checked ~ .timeline-content .timeline-year[data-year="2013–2018"] {
-          display: block;
-        }
-        #year-2012:checked ~ .timeline-content .timeline-year[data-year="2012"] {
-          display: block;
-        }
-        #year-2004-2011:checked ~ .timeline-content .timeline-year[data-year="2004–2011"] {
-          display: block;
-        }
-        #year-2004:checked ~ .timeline-content .timeline-year[data-year="2004"] {
-          display: block;
-        }
+  <style>
+    :root {
+      --bg: #08080a;
+      --surf: #0e0e10;
+      --card: #121214;
+      --card2: #161618;
+      --b1: #1e1e22;
+      --b2: #2a2a2e;
+      --t1: #ddd6cc;
+      --t2: #a89e92;
+      --mu: #6a6260;
+      --dim: #3a3836;
+      --gold: #e0aa40;
+      --gold2: #f0cc72;
+      --coral: #d86848;
+      --sage: #5a9870;
+      --slate: #5a80a8;
+      --mauve: #9070a0;
+    }
 
-        /* Highlight active label */
-        #year-2026:checked ~ .timeline-content label[for="year-2026"],
-        #year-2025:checked ~ .timeline-content label[for="year-2025"],
-        #year-2024:checked ~ .timeline-content label[for="year-2024"],
-        #year-2023:checked ~ .timeline-content label[for="year-2023"],
-        #year-2022:checked ~ .timeline-content label[for="year-2022"],
-        #year-2021:checked ~ .timeline-content label[for="year-2021"],
-        #year-2020:checked ~ .timeline-content label[for="year-2020"],
-        #year-2019:checked ~ .timeline-content label[for="year-2019"],
-        #year-2013-2018:checked ~ .timeline-content label[for="year-2013-2018"],
-        #year-2012:checked ~ .timeline-content label[for="year-2012"],
-        #year-2004-2011:checked ~ .timeline-content label[for="year-2004-2011"],
-        #year-2004:checked ~ .timeline-content label[for="year-2004"] {
-          color: theme('colors.zinc.200');
-          font-weight: 600;
-          background-color: theme('colors.zinc.900');
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--t1);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 36px 100px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Header */
+    header {
+      padding: 80px 0 56px;
+      border-bottom: 1px solid var(--b2);
+    }
+
+    .eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .eyebrow::after {
+      content: '';
+      width: 60px;
+      height: 1px;
+      background: var(--gold);
+      opacity: 0.4;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(72px, 11vw, 130px);
+      font-weight: 900;
+      line-height: 0.87;
+      letter-spacing: -0.03em;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    h1 span {
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .hd-desc {
+      font-size: 15px;
+      color: var(--t2);
+      max-width: 520px;
+      line-height: 1.7;
+      font-weight: 300;
+      margin-bottom: 32px;
+    }
+
+    /* Life Stats */
+    .life-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1px solid var(--b2);
+    }
+
+    .ls {
+      padding: 18px 20px;
+      border-right: 1px solid var(--b2);
+      transition: background 0.2s;
+    }
+
+    .ls:last-child {
+      border-right: none;
+    }
+
+    .ls:hover {
+      background: var(--card);
+    }
+
+    .ls-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .ls-lbl {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--mu);
+    }
+
+    /* Filter Tabs */
+    .filters {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 36px 0 0;
+    }
+
+    .fb {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 7px 16px;
+      border: 1px solid var(--b2);
+      background: transparent;
+      color: var(--mu);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .fb:hover {
+      color: var(--t1);
+      border-color: var(--b2);
+      background: var(--card);
+    }
+
+    .fb.active {
+      background: var(--gold);
+      color: var(--bg);
+      border-color: var(--gold);
+      font-weight: 600;
+    }
+
+    .fb.f-edu.active {
+      background: var(--slate);
+      border-color: var(--slate);
+    }
+
+    .fb.f-proj.active {
+      background: var(--coral);
+      border-color: var(--coral);
+    }
+
+    .fb.f-life.active {
+      background: var(--sage);
+      border-color: var(--sage);
+    }
+
+    .fb.f-learn.active {
+      background: var(--mauve);
+      border-color: var(--mauve);
+    }
+
+    /* Main Layout */
+    .tl-layout {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 0;
+      margin-top: 60px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Year Sidebar */
+    .year-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+      position: sticky;
+      top: 32px;
+      height: fit-content;
+      z-index: 20;
+    }
+
+    .yb {
+      font-family: 'Playfair Display', serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--dim);
+      padding: 10px 16px 10px 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
+      border-right: 2px solid var(--b1);
+      letter-spacing: -0.01em;
+      position: relative;
+      width: 100%;
+    }
+
+    .yb:hover {
+      color: var(--t2);
+    }
+
+    .yb.active {
+      color: var(--gold);
+      border-right-color: var(--gold);
+    }
+
+    .yb::after {
+      content: '';
+      position: absolute;
+      right: -5px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .yb.active::after {
+      opacity: 1;
+    }
+
+    /* Timeline Content */
+    .tl-content {
+      padding-left: 40px;
+      border-left: 1px solid var(--b1);
+    }
+
+    .yr-section {
+      display: none;
+      animation: fu 0.45s forwards;
+    }
+
+    .yr-section.vis {
+      display: block;
+    }
+
+    @keyframes fu {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
       }
-    </style>
-  </>
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .yr-hero {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 36px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--b1);
+    }
+
+    .yr-big {
+      font-family: 'Playfair Display', serif;
+      font-size: 80px;
+      font-weight: 900;
+      color: var(--b2);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      user-select: none;
+    }
+
+    .yr-age {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--mu);
+      letter-spacing: 0.1em;
+    }
+
+    /* Entries */
+    .entries {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .entry {
+      position: relative;
+      padding: 20px 22px;
+      background: var(--card);
+      border: 1px solid var(--b1);
+      cursor: default;
+      transition: all 0.25s;
+      overflow: hidden;
+    }
+
+    .entry::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--e-clr, var(--gold));
+    }
+
+    .entry:hover {
+      border-color: var(--b2);
+      background: var(--card2);
+      transform: translateX(4px);
+    }
+
+    /* Type colors */
+    .e-education {
+      --e-clr: var(--slate);
+    }
+
+    .e-project {
+      --e-clr: var(--coral);
+    }
+
+    .e-life {
+      --e-clr: var(--sage);
+    }
+
+    .e-learning {
+      --e-clr: var(--mauve);
+    }
+
+    .e-milestone {
+      --e-clr: var(--gold);
+    }
+
+    .e-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .e-when {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--mu);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .e-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 2px 9px;
+      border-radius: 20px;
+    }
+
+    .b-education {
+      background: rgba(90, 128, 168, 0.15);
+      color: var(--slate);
+      border: 1px solid rgba(90, 128, 168, 0.3);
+    }
+
+    .b-project {
+      background: rgba(216, 104, 72, 0.12);
+      color: var(--coral);
+      border: 1px solid rgba(216, 104, 72, 0.3);
+    }
+
+    .b-life {
+      background: rgba(90, 152, 112, 0.12);
+      color: var(--sage);
+      border: 1px solid rgba(90, 152, 112, 0.3);
+    }
+
+    .b-learning {
+      background: rgba(144, 112, 160, 0.12);
+      color: var(--mauve);
+      border: 1px solid rgba(144, 112, 160, 0.3);
+    }
+
+    .b-milestone {
+      background: rgba(224, 170, 64, 0.12);
+      color: var(--gold);
+      border: 1px solid rgba(224, 170, 64, 0.3);
+    }
+
+    .e-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 21px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.25;
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .e-desc {
+      font-size: 14px;
+      color: var(--t2);
+      line-height: 1.65;
+    }
+
+    .chapter-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.5;
+      position: absolute;
+      right: 16px;
+      bottom: 12px;
+    }
+
+    /* Age Bar */
+    .age-bar-wrap {
+      margin-top: 48px;
+      padding: 24px;
+      background: var(--card);
+      border: 1px solid var(--b1);
+    }
+
+    .ab-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mu);
+      margin-bottom: 12px;
+    }
+
+    .ab-track {
+      height: 6px;
+      background: var(--b2);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .ab-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--coral));
+      border-radius: 3px;
+      transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .ab-info {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--t2);
+    }
+
+    footer {
+      margin-top: 80px;
+      padding-top: 24px;
+      border-top: 1px solid var(--b2);
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--mu);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    @media (max-width: 768px) {
+      .wrap {
+        padding: 0 20px 80px;
+      }
+
+      h1 {
+        font-size: 64px;
+      }
+
+      .tl-layout {
+        grid-template-columns: 1fr;
+      }
+
+      /* Mobile Year Navigation - Horizontal Scrollable */
+      .year-nav {
+        position: static;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 6px;
+        margin-bottom: 32px;
+        padding-bottom: 0;
+        border-bottom: none;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding: 4px;
+      }
+
+      .year-nav::-webkit-scrollbar {
+        display: none;
+      }
+
+      .yb {
+        flex-shrink: 0;
+        border-right: none;
+        padding: 7px 14px;
+        border: 1px solid var(--b2);
+        font-size: 11px;
+        font-family: 'DM Mono', monospace;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        background: transparent;
+        color: var(--mu);
+      }
+
+      .yb:hover {
+        color: var(--t1);
+        border-color: var(--b2);
+        background: var(--card);
+      }
+
+      .yb.active {
+        border-color: var(--gold);
+        background: var(--gold);
+        color: var(--bg);
+        font-weight: 600;
+      }
+
+      .yb::after {
+        display: none;
+      }
+
+      .tl-content {
+        padding-left: 0;
+        border-left: none;
+      }
+
+      .life-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .ls:nth-child(2) {
+        border-right: none;
+      }
+
+      .ls:nth-child(3),
+      .ls:nth-child(4) {
+        border-top: 1px solid var(--b2);
+      }
+
+      .ls:nth-child(4) {
+        border-right: none;
+      }
+
+      .yr-big {
+        font-size: 48px;
+      }
+    }
+  </style>
+
+  <script client:load>
+
+    // Year navigation
+    function setupYearNavigation() {
+      const buttons = document.querySelectorAll('.yb');
+      const sections = document.querySelectorAll('.yr-section');
+      
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const yearId = btn.getAttribute('data-year');
+          
+          // Remove active class from all buttons
+          buttons.forEach(b => b.classList.remove('active'));
+          // Add active class to clicked button
+          btn.classList.add('active');
+          
+          // Hide all sections
+          sections.forEach(section => {
+            section.classList.remove('vis');
+          });
+          
+          // Show target section
+          const targetSection = document.getElementById(`y-${yearId}`);
+          if (targetSection) {
+            targetSection.classList.add('vis');
+          }
+        });
+      });
+    }
+
+    // Filter functionality
+    function setupFilters() {
+      const filterButtons = document.querySelectorAll('.fb');
+      const entries = document.querySelectorAll('.entry');
+      
+      filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const filter = btn.getAttribute('data-filter');
+          
+          // Update active button
+          filterButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          
+          // Filter entries
+          entries.forEach(entry => {
+            if (filter === 'all') {
+              entry.style.display = '';
+            } else {
+              const category = entry.getAttribute('data-category');
+              entry.style.display = category === filter ? '' : 'none';
+            }
+          });
+        });
+      });
+    }
+
+    // Update age dynamically
+    function updateAge() {
+      const bornYear = 2004;
+      const ageElement = document.getElementById('ageNum');
+      if (ageElement) {
+        ageElement.textContent = new Date().getFullYear() - bornYear;
+      }
+    }
+
+    // Initialize everything when DOM is loaded
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        setupYearNavigation();
+        setupFilters();
+        updateAge();
+      });
+    } else {
+      setupYearNavigation();
+      setupFilters();
+      updateAge();
+    }
+  </script>
 </BaseLayout>

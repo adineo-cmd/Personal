@@ -2,85 +2,134 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageNav from '../components/PageNavigation.astro';
 import { notesIndex } from '../data/notesIndex.js';
-import NoteCard from '../components/NoteCard.astro';
+
+const featuredCount = notesIndex.categories.reduce((sum, cat) => {
+  return sum + Math.min(cat.notes.length, 4);
+}, 0);
 ---
+
 <BaseLayout title="Notes | Aditya Yadav" description="My personal knowledge base and curated notes">
   <>
     <PageNav currentPage="notes" />
 
-    <div class="min-h-screen bg-[#0f0f0f]">
-      <div 
-        class="text-zinc-400 py-16 px-6"
-        style="font-family: 'Courier New', Courier, monospace;"
-      >
-        <div class="max-w-5xl mx-auto">
-          <h1 class="text-5xl font-serif mb-6 text-zinc-200">Notes</h1>
+    <div class="min-h-screen bg-[#08080a] text-[#ddd6cc]">
+      <div class="py-16 px-6">
+        <div class="max-w-6xl mx-auto">
           
-          <p class="text-xs text-zinc-500 mb-2">Last Updated: February 04, 2026</p>
-          
-          <p class="text-zinc-400 text-sm mb-8 leading-relaxed">
-            My personal knowledge base. A curated collection of 100+ notes on programming, 
-            AI/ML, DevOps, productivity, and homelab. Continuously updated as I learn and grow.
-          </p>
+          {/* Header */}
+          <div class="mb-12">
+            <p class="text-xs text-[#6a6260] uppercase tracking-widest mb-2">Knowledge Base</p>
+            <h1 class="text-6xl md:text-7xl font-serif mb-4">
+              <span class="text-white">My</span><span class="text-[#e0aa40] italic"> Notes</span>
+            </h1>
+            <p class="text-[#6a6260] text-sm mb-6">Last Updated — February 04, 2026</p>
+            <p class="text-[#a89e92] max-w-2xl leading-relaxed">
+              A curated collection of 100+ notes on programming, AI/ML, DevOps, 
+              productivity, and homelab. Continuously updated as I learn and grow.
+            </p>
+          </div>
 
-          <pre class="text-zinc-500 text-sm mb-8 whitespace-pre font-mono">
-{notesIndex.asciiArt}
-          </pre>
-
-          {/* Statistics */}
-          <div class="mb-10 grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-lg text-center">
-              <div class="text-3xl font-bold text-zinc-200">100+</div>
-              <div class="text-xs text-zinc-500 mt-1">Total Notes</div>
+          {/* Stats Grid */}
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-[#2a2a2e] border border-[#2a2a2e] mb-16">
+            <div class="bg-[#08080a] p-6">
+              <div class="text-4xl font-serif text-[#e0aa40] mb-1">100+</div>
+              <div class="text-xs text-[#6a6260] uppercase tracking-wider">Total Notes</div>
             </div>
-            <div class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-lg text-center">
-              <div class="text-3xl font-bold text-zinc-200">{notesIndex.categories.length}</div>
-              <div class="text-xs text-zinc-500 mt-1">Categories</div>
+            <div class="bg-[#08080a] p-6">
+              <div class="text-4xl font-serif text-[#5a9870] mb-1">6</div>
+              <div class="text-xs text-[#6a6260] uppercase tracking-wider">Categories</div>
             </div>
-            <div class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-lg text-center">
-              <div class="text-3xl font-bold text-zinc-200">
-                {notesIndex.categories.reduce((sum, cat) => sum + cat.notes.length, 0)}
-              </div>
-              <div class="text-xs text-zinc-500 mt-1">Featured</div>
+            <div class="bg-[#08080a] p-6">
+              <div class="text-4xl font-serif text-[#5a80a8] mb-1">26</div>
+              <div class="text-xs text-[#6a6260] uppercase tracking-wider">Featured</div>
             </div>
-            <div class="p-4 bg-zinc-900/60 border border-zinc-800 rounded-lg text-center">
-              <div class="text-3xl font-bold text-zinc-200">2024-2026</div>
-              <div class="text-xs text-zinc-500 mt-1">Active Years</div>
+            <div class="bg-[#08080a] p-6">
+              <div class="text-4xl font-serif text-[#d86848] mb-1">2024–26</div>
+              <div class="text-xs text-[#6a6260] uppercase tracking-wider">Active Years</div>
             </div>
           </div>
 
-          {/* Categories */}
-          {notesIndex.categories.map((category, catIndex) => (
-            <div class="mb-12 border-b border-zinc-800/50 pb-8 last:border-0 last:pb-0" key={catIndex}>
-              <h2 class="text-2xl font-medium text-zinc-200 mb-3">{category.title}</h2>
-              {category.description && (
-                <p class="text-zinc-500 text-sm mb-6 leading-relaxed">
-                  {category.description}
-                </p>
-              )}
-              
-              <div class="space-y-4">
-                {category.notes.map((note) => (
-                  <NoteCard 
-                    key={note.slug}
-                    slug={note.slug}
-                    title={note.title}
-                    date={note.date}
-                    excerpt={note.excerpt}
-                    tags={note.tags}
-                  />
-                ))}
-              </div>
+          {/* Search Bar */}
+          <div class="mb-12">
+            <div class="relative">
+              <input 
+                type="text" 
+                id="searchInput"
+                placeholder="Search notes, tags..."
+                class="w-full bg-[#0e0e10] border border-[#2a2a2e] rounded-lg py-3 pl-12 pr-4 text-sm text-[#ddd6cc] placeholder-[#6a6260] focus:outline-none focus:border-[#e0aa40] transition-colors"
+              />
+              <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6a6260]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
             </div>
-          ))}
+            <p id="searchResults" class="text-xs text-[#6a6260] mt-2 hidden"></p>
+          </div>
+
+          {/* Categories & Notes */}
+          <div id="notesContainer">
+            {notesIndex.categories.map((category, catIndex) => (
+              <div class="mb-12 category-section" data-category={category.title} key={catIndex}>
+                <div class="flex items-center gap-3 mb-6">
+                  <h2 class="text-2xl font-serif text-white">
+                    {category.title}
+                  </h2>
+                  <span class="text-[#6a6260] text-sm italic">{category.description}</span>
+                  <span class="ml-auto text-xs text-[#6a6260] border border-[#2a2a2e] rounded-full px-3 py-1 note-count">
+                    {category.notes.length} notes
+                  </span>
+                </div>
+                
+                <div class="space-y-3">
+                  {category.notes.map((note) => (
+                    <a 
+                      href={`/notes/${note.slug}`}
+                      class="note-card block group border-l-2 border-[#2a2a2e] hover:border-[#e0aa40] pl-6 py-2 transition-all duration-300"
+                      data-title={note.title.toLowerCase()}
+                      data-tags={note.tags?.join(' ').toLowerCase() || ''}
+                      data-excerpt={note.excerpt.toLowerCase()}
+                      key={note.slug}
+                    >
+                      <article class="bg-[#0e0e10] border border-[#2a2a2e]/50 rounded-lg p-6 hover:border-[#2a2a2e] transition-colors">
+                        <div class="flex items-start justify-between mb-2">
+                          <h3 class="text-lg font-medium text-[#ddd6cc] group-hover:text-white transition-colors">
+                            {note.title}
+                          </h3>
+                          <time class="text-xs text-[#6a6260] whitespace-nowrap ml-4">
+                            {new Date(note.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </time>
+                        </div>
+                        <p class="text-sm text-[#a89e92] leading-relaxed mb-4">
+                          {note.excerpt}
+                        </p>
+                        {note.tags && note.tags.length > 0 && (
+                          <div class="flex flex-wrap gap-2">
+                            {note.tags.map((tag, tagIndex) => (
+                              <span 
+                                key={tagIndex}
+                                class="text-xs text-[#6a6260] border border-[#2a2a2e]/50 px-2 py-1 rounded hover:border-[#2a2a2e] transition-colors"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </article>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
         </div>
       </div>
 
-      <div class="border-t border-zinc-800/50 py-6">
-        <div class="max-w-5xl mx-auto px-6">
+      {/* Footer */}
+      <div class="border-t border-[#2a2a2e]/50 py-6">
+        <div class="max-w-6xl mx-auto px-6">
           <a
             href="/"
-            class="flex items-center gap-2 text-zinc-500 hover:text-zinc-300 transition-colors text-sm"
+            class="inline-flex items-center gap-2 text-[#6a6260] hover:text-[#e0aa40] transition-colors text-sm"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
@@ -90,5 +139,59 @@ import NoteCard from '../components/NoteCard.astro';
         </div>
       </div>
     </div>
+
+    {/* Search Functionality */}
+    <script>
+      const searchInput = document.getElementById('searchInput');
+      const notesContainer = document.getElementById('notesContainer');
+      const searchResults = document.getElementById('searchResults');
+      const categories = notesContainer.querySelectorAll('.category-section');
+      const noteCards = notesContainer.querySelectorAll('.note-card');
+
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        
+        if (query === '') {
+          noteCards.forEach(card => {
+            card.style.display = 'block';
+          });
+          categories.forEach(cat => {
+            cat.style.display = 'block';
+          });
+          searchResults.classList.add('hidden');
+          return;
+        }
+
+        let visibleCount = 0;
+
+        noteCards.forEach(card => {
+          const title = card.getAttribute('data-title');
+          const tags = card.getAttribute('data-tags');
+          const excerpt = card.getAttribute('data-excerpt');
+          
+          const matches = title.includes(query) || 
+                         tags.includes(query) || 
+                         excerpt.includes(query);
+          
+          if (matches) {
+            card.style.display = 'block';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        categories.forEach(cat => {
+          const hasVisibleNotes = Array.from(cat.querySelectorAll('.note-card')).some(card => 
+            card.style.display !== 'none'
+          );
+          
+          cat.style.display = hasVisibleNotes ? 'block' : 'none';
+        });
+
+        searchResults.textContent = `Found ${visibleCount} note${visibleCount !== 1 ? 's' : ''}`;
+        searchResults.classList.remove('hidden');
+      });
+    </script>
   </>
 </BaseLayout>

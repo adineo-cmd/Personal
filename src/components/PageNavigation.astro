@@ -10,6 +10,8 @@ const navItems = [
   { label: 'projects', href: '/projects', display: '🚀 projects' },
   { label: 'writings', href: '/writings', display: '✍️ writings' },
   { label: 'exercise', href: '/exercise', display: '💪 exercise' },
+  { label: 'home training', href: '/hometraining', display: '🧭 home training' },
+  { label: 'mind', href: '/mind', display: '🧠 mind' },
   { label: 'gear', href: '/gear', display: '⚙️ gear' },
   { label: 'timeline', href: '/timeline', display: '📅 timeline' },
   { label: 'notes', href: '/notes', display: '🗒️ notes' },
@@ -30,7 +32,7 @@ const moreItems = navItems.slice(visibleCount);
 
 <>
   {/* Desktop Navigation */}
-  <nav class="hidden md:block border-b border-zinc-800 bg-zinc-950">
+  <nav class="hidden md:block border-b border-[#2a2a2e] bg-[#08080a]">
     <div class="max-w-7xl mx-auto px-6 py-6">
       <div class="flex flex-wrap justify-end gap-4 items-center">
         {/* Visible Items */}
@@ -39,8 +41,8 @@ const moreItems = navItems.slice(visibleCount);
             href={item.href}
             class={`text-sm transition-colors ${
               currentPage === item.label
-                ? 'text-zinc-200 underline'
-                : 'text-zinc-500 hover:text-zinc-300'
+                ? 'text-[#e0aa40] underline decoration-[#e0aa40]/40 underline-offset-4'
+                : 'text-[#6a6260] hover:text-[#ddd6cc]'
             }`}
             aria-current={currentPage === item.label ? 'page' : undefined}
           >
@@ -53,19 +55,19 @@ const moreItems = navItems.slice(visibleCount);
           <div class="more-container relative inline-block" id="moreContainer">
             <button
               id="moreButton"
-              class="text-sm text-zinc-500 hover:text-zinc-300 cursor-pointer transition-colors select-none bg-transparent border-none"
+              class="text-sm text-[#6a6260] hover:text-[#ddd6cc] cursor-pointer transition-colors select-none bg-transparent border-none"
               aria-label="Toggle more menu"
             >
               more ▾
             </button>
-            <div class="dropdown-menu absolute right-0 mt-2 min-w-[180px] bg-zinc-900 border border-zinc-700 rounded-lg shadow-lg z-50 overflow-hidden hidden">
+            <div class="dropdown-menu absolute right-0 mt-2 min-w-[180px] bg-[#0e0e10] border border-[#2a2a2e] rounded-lg shadow-lg z-50 overflow-hidden hidden">
               {moreItems.map(item => (
                 <a
                   href={item.href}
                   class={`block px-4 py-2 text-sm transition-colors ${
                     currentPage === item.label
-                      ? 'bg-zinc-800 text-zinc-200'
-                      : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'
+                      ? 'bg-[#121214] text-[#e0aa40]'
+                      : 'text-[#a89e92] hover:bg-[#121214] hover:text-[#ddd6cc]'
                   }`}
                   aria-current={currentPage === item.label ? 'page' : undefined}
                 >
@@ -80,10 +82,10 @@ const moreItems = navItems.slice(visibleCount);
   </nav>
 
   {/* Mobile Menu Button */}
-  <div class="md:hidden flex justify-end px-6 py-6 border-b border-zinc-800 bg-zinc-950">
+  <div class="md:hidden flex justify-end px-6 py-6 border-b border-[#2a2a2e] bg-[#08080a]">
     <button
       id="mobileMenuButton"
-      class="text-zinc-400 hover:text-zinc-200 cursor-pointer bg-transparent border-none p-0"
+      class="text-[#a89e92] hover:text-[#ddd6cc] cursor-pointer bg-transparent border-none p-0"
       aria-label="Toggle menu"
     >
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -93,11 +95,11 @@ const moreItems = navItems.slice(visibleCount);
   </div>
 
   {/* Mobile Sidebar */}
-  <nav class="mobile-nav fixed inset-y-0 left-0 z-50 w-64 bg-zinc-950 text-zinc-200 transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden" id="mobileNav">
+  <nav class="mobile-nav fixed inset-y-0 left-0 z-50 w-64 bg-[#08080a] text-[#ddd6cc] transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden" id="mobileNav">
     <div class="p-6 pt-12">
       <button
         id="mobileCloseButton"
-        class="absolute top-4 right-4 text-zinc-400 hover:text-zinc-200 cursor-pointer bg-transparent border-none p-0"
+        class="absolute top-4 right-4 text-[#a89e92] hover:text-[#ddd6cc] cursor-pointer bg-transparent border-none p-0"
         aria-label="Close menu"
       >
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -110,8 +112,8 @@ const moreItems = navItems.slice(visibleCount);
             href={item.href}
             class={`block w-full text-left px-4 py-2 rounded transition-colors ${
               currentPage === item.label
-                ? 'bg-zinc-800 text-zinc-200'
-                : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'
+                ? 'bg-[#121214] text-[#e0aa40]'
+                : 'text-[#a89e92] hover:bg-[#121214] hover:text-[#ddd6cc]'
             }`}
             aria-current={currentPage === item.label ? 'page' : undefined}
           >
@@ -123,7 +125,7 @@ const moreItems = navItems.slice(visibleCount);
   </nav>
 
   {/* Overlay for mobile menu */}
-  <div class="mobile-overlay fixed inset-0 bg-black/50 z-40 md:hidden hidden" id="mobileOverlay"></div>
+  <div class="mobile-overlay fixed inset-0 bg-[#08080a]/80 z-40 md:hidden hidden" id="mobileOverlay"></div>
 
   <style>
     /* Mobile Sidebar Open State */

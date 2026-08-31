@@ -1,0 +1,143 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageNav from '../../components/PageNavigation.astro';
+import { martialArtsRegistry } from '../../data/martial-arts/index.js';
+
+// Sort styles alphabetically by default for better UX
+const styles = [...martialArtsRegistry].sort((a, b) => a.name.localeCompare(b.name));
+---
+
+<BaseLayout title="Martial Arts Encyclopedia | Aditya Yadav" description="Explore techniques, forms, and principles from martial arts worldwide">
+  <Fragment>
+    <PageNav currentPage="martialarts" />
+
+    <div class="min-h-screen bg-[#08080a]">
+      <div class="text-[#a89e92] py-16 px-6" style="font-family: 'Courier New', Courier, monospace;">
+        <div class="max-w-6xl mx-auto">
+          
+          <!-- Header Section -->
+          <header class="mb-12">
+            <h1 class="text-5xl font-serif mb-6 text-[#ddd6cc]">
+              <span class="text-white">🥋 Martial</span><span class="text-[#e0aa40] italic"> Arts</span>
+              <span class="text-[#ddd6cc]"> Encyclopedia</span>
+            </h1>
+            <p class="text-xs text-[#6a6260] mb-2">Updated: February 04, 2026</p>
+            <p class="text-[#a89e92] text-sm mb-8 leading-relaxed max-w-3xl">
+              Decentralized knowledge base. Each martial art lives in its own module. 
+              Explore detailed curriculums, anatomy targets, progression paths, and essential knowledge for every style.
+            </p>
+
+            <!-- Search Bar -->
+            <div class="relative max-w-xl group">
+              <input 
+                type="text" 
+                id="styleSearch"
+                placeholder="Search styles (e.g., Karate, BJJ, Tai Chi)..."
+                class="w-full px-4 py-3 bg-[#0e0e10] border border-[#2a2a2e] rounded-lg text-[#ddd6cc] placeholder-[#6a6260] focus:outline-none focus:border-[#e0aa40] focus:ring-1 focus:ring-[#e0aa40]/50 transition-all group-hover:border-[#2a2a2e]"
+              />
+              <svg class="absolute right-3 top-3.5 w-5 h-5 text-[#6a6260] pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </header>
+
+          <!-- Styles Grid -->
+          <div id="stylesGrid" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {styles.map(style => (
+              <a 
+                href={`/martialarts/${style.id}`}
+                class="style-card group block border border-[#2a2a2e] rounded-lg p-5 bg-[#0e0e10]/30 hover:bg-[#121214] hover:border-[#2a2a2e] transition-all duration-200 relative overflow-hidden"
+              >
+                <!-- Top Accent Line (Dynamic color) -->
+                <div class={`absolute top-0 left-0 w-full h-1 ${style.color?.split(' ')[0] || 'bg-[#2a2a2e]'} opacity-0 group-hover:opacity-100 transition-opacity`}></div>
+
+                <div class="flex items-start gap-4 mb-3">
+                  <span class="text-3xl bg-[#0e0e10] p-2 rounded-lg border border-[#2a2a2e] group-hover:border-[#2a2a2e] transition-colors shadow-sm">{style.icon}</span>
+                  <div class="flex-1 min-w-0">
+                    <h3 class="text-lg font-medium text-[#ddd6cc] group-hover:text-white transition-colors truncate">{style.name}</h3>
+                    <p class="text-xs text-[#6a6260] mt-0.5 font-mono">{style.origin}</p>
+                  </div>
+                </div>
+                
+                <p class="text-sm text-[#a89e92] line-clamp-2 mb-4 leading-relaxed">{style.description}</p>
+                
+                {style.keyPrinciples?.length > 0 && (
+                  <div class="pt-3 border-t border-[#2a2a2e]/50 group-hover:border-[#2a2a2e] transition-colors">
+                    <div class="text-[10px] uppercase tracking-wider text-[#6a6260] mb-2">Core Principles</div>
+                    <div class="flex flex-wrap gap-1.5">
+                      {style.keyPrinciples.slice(0, 3).map(principle => (
+                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-[#1e1e22] text-[#6a6260] border border-[#2a2a2e] truncate">
+                          {principle}
+                        </span>
+                      ))}
+                      {style.keyPrinciples.length > 3 && (
+                        <span class="text-[10px] px-1.5 py-0.5 text-[#6a6260]">+{style.keyPrinciples.length - 3}</span>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </a>
+            ))}
+          </div>
+
+          <!-- Empty State (Hidden by default) -->
+          <div id="emptyState" class="hidden text-center py-20 border border-dashed border-[#2a2a2e] rounded-lg bg-[#0e0e10]/20">
+            <div class="text-4xl mb-4 opacity-50">🔍</div>
+            <h3 class="text-lg font-medium text-[#ddd6cc] mb-2">No styles found</h3>
+            <p class="text-[#6a6260] text-sm">Try adjusting your search terms</p>
+          </div>
+
+          <!-- Stats Footer -->
+          <div class="mt-16 pt-6 border-t border-[#2a2a2e] flex flex-wrap justify-between items-center text-xs text-[#6a6260] font-mono">
+            <div>
+              <span class="font-bold text-[#a89e92]">{styles.length}</span> Martial Arts Styles
+            </div>
+            <div>
+              Database: <span class="font-bold text-[#a89e92]">Decentralized</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Script -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('styleSearch');
+        const cards = document.querySelectorAll('.style-card');
+        const emptyState = document.getElementById('emptyState');
+        const grid = document.getElementById('stylesGrid');
+
+        searchInput?.addEventListener('input', (e) => {
+          const query = e.target.value.toLowerCase().trim();
+          let visibleCount = 0;
+
+          cards.forEach(card => {
+            // Search across Name, Origin, and Description
+            const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+            const origin = card.querySelector('p')?.textContent.toLowerCase() || '';
+            const desc = card.querySelector('p.line-clamp-2')?.textContent.toLowerCase() || '';
+            
+            const isVisible = title.includes(query) || origin.includes(query) || desc.includes(query);
+            
+            if (isVisible) {
+              card.style.display = 'block';
+              visibleCount++;
+            } else {
+              card.style.display = 'none';
+            }
+          });
+
+          if (visibleCount === 0) {
+            grid.classList.add('hidden');
+            emptyState.classList.remove('hidden');
+          } else {
+            grid.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+          }
+        });
+      });
+    </script>
+  </Fragment>
+</BaseLayout>

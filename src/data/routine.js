@@ -2,6 +2,18 @@
 // Budget-Friendly Longevity Routine for College Students (IST)
 // Based on healthy principles without the expensive Blueprint costs
 
+/**
+ * @typedef {Object} RoutineItem
+ * @property {string} time        - 12-hour format, e.g. "08:30 AM"
+ * @property {string} period      - "Morning" | "Midday" | "Afternoon" | "Evening" | "Night"
+ * @property {string} title
+ * @property {string} description
+ * @property {string} icon        - Emoji
+ * @property {'high'|'medium'|'low'} priority
+ * @property {{ duration: string, cost: string, tip: string }} details
+ */
+
+/** @type {RoutineItem[]} */
 export const dailyRoutine = [
   {
     time: '08:30 AM',
@@ -13,8 +25,8 @@ export const dailyRoutine = [
     details: {
       duration: '15 mins',
       cost: '₹0',
-      tip: 'Avoid phone for first 20 mins to reduce anxiety.'
-    }
+      tip: 'Avoid phone for first 20 mins to reduce anxiety.',
+    },
   },
   {
     time: '08:45 AM',
@@ -25,9 +37,9 @@ export const dailyRoutine = [
     priority: 'low',
     details: {
       duration: '5 mins',
-      cost: '₹2-5/day',
-      tip: 'Food first! Supplements are secondary.'
-    }
+      cost: '₹2–5/day',
+      tip: 'Food first! Supplements are secondary.',
+    },
   },
   {
     time: '09:00 AM',
@@ -39,21 +51,21 @@ export const dailyRoutine = [
     details: {
       duration: '15 mins',
       cost: '₹0',
-      tip: 'Use YouTube free yoga videos (e.g., Yoga With Adriene).'
-    }
+      tip: 'Use YouTube free yoga videos (e.g., Yoga With Adriene).',
+    },
   },
   {
     time: '09:15 AM',
     period: 'Morning',
     title: 'Cold Shower',
-    description: 'End your regular shower with 30-60 seconds of cold water.',
+    description: 'End your regular shower with 30–60 seconds of cold water.',
     icon: '🚿',
     priority: 'medium',
     details: {
       duration: '10 mins',
       cost: '₹0',
-      tip: 'Boosts alertness and circulation without expensive plunges.'
-    }
+      tip: 'Boosts alertness and circulation without expensive plunges.',
+    },
   },
   {
     time: '09:30 AM',
@@ -64,9 +76,9 @@ export const dailyRoutine = [
     priority: 'high',
     details: {
       duration: '30 mins',
-      cost: '₹20-50',
-      tip: 'Avoid sugary cereals. Add fruits if possible.'
-    }
+      cost: '₹20–50',
+      tip: 'Avoid sugary cereals. Add fruits if possible.',
+    },
   },
   {
     time: '10:00 AM',
@@ -78,8 +90,8 @@ export const dailyRoutine = [
     details: {
       duration: '90 mins',
       cost: '₹0',
-      tip: 'Use Pomodoro technique (25 min study + 5 min break).'
-    }
+      tip: 'Use Pomodoro technique (25 min study + 5 min break).',
+    },
   },
   {
     time: '11:30 AM',
@@ -91,8 +103,8 @@ export const dailyRoutine = [
     details: {
       duration: '15 mins',
       cost: '₹0',
-      tip: 'Natural light helps regulate sleep cycle.'
-    }
+      tip: 'Natural light helps regulate sleep cycle.',
+    },
   },
   {
     time: '11:45 AM',
@@ -104,8 +116,8 @@ export const dailyRoutine = [
     details: {
       duration: '90 mins',
       cost: '₹0',
-      tip: 'Batch similar tasks to save mental energy.'
-    }
+      tip: 'Batch similar tasks to save mental energy.',
+    },
   },
   {
     time: '01:15 PM',
@@ -116,9 +128,9 @@ export const dailyRoutine = [
     priority: 'high',
     details: {
       duration: '45 mins',
-      cost: '₹50-100',
-      tip: 'Fill half plate with vegetables if available.'
-    }
+      cost: '₹50–100',
+      tip: 'Fill half plate with vegetables if available.',
+    },
   },
   {
     time: '02:00 PM',
@@ -130,8 +142,8 @@ export const dailyRoutine = [
     details: {
       duration: '20 mins',
       cost: '₹0',
-      tip: 'Dont sleep longer than 30 mins or you will feel groggy.'
-    }
+      tip: "Don't sleep longer than 30 mins or you will feel groggy.",
+    },
   },
   {
     time: '02:30 PM',
@@ -143,8 +155,8 @@ export const dailyRoutine = [
     details: {
       duration: '90 mins',
       cost: '₹0',
-      tip: 'Low energy time, do low-focus tasks.'
-    }
+      tip: 'Low energy time, do low-focus tasks.',
+    },
   },
   {
     time: '04:00 PM',
@@ -155,9 +167,9 @@ export const dailyRoutine = [
     priority: 'medium',
     details: {
       duration: '30 mins',
-      cost: '₹10-20',
-      tip: 'Social connection is key for mental health.'
-    }
+      cost: '₹10–20',
+      tip: 'Social connection is key for mental health.',
+    },
   },
   {
     time: '04:30 PM',
@@ -169,8 +181,8 @@ export const dailyRoutine = [
     details: {
       duration: '90 mins',
       cost: '₹0',
-      tip: 'Build things that matter to you.'
-    }
+      tip: 'Build things that matter to you.',
+    },
   },
   {
     time: '06:00 PM',
@@ -182,8 +194,8 @@ export const dailyRoutine = [
     details: {
       duration: '120 mins',
       cost: '₹0',
-      tip: 'Use this buffer to transition into workout mode.'
-    }
+      tip: 'Use this buffer to transition into workout mode.',
+    },
   },
   {
     time: '08:00 PM',
@@ -194,9 +206,9 @@ export const dailyRoutine = [
     priority: 'high',
     details: {
       duration: '90 mins',
-      cost: '₹8-9/day (₹250/month budget gym)',
-      tip: 'Stick to your ₹250/mo budget. Look for student discounts or off-peak plans!'
-    }
+      cost: '₹8–9/day (₹250/month budget gym)',
+      tip: 'Stick to your ₹250/mo budget. Look for student discounts or off-peak plans!',
+    },
   },
   {
     time: '09:30 PM',
@@ -207,9 +219,9 @@ export const dailyRoutine = [
     priority: 'high',
     details: {
       duration: '30 mins',
-      cost: '₹50-100',
-      tip: 'Eat within 45 mins post-workout for optimal recovery.'
-    }
+      cost: '₹50–100',
+      tip: 'Eat within 45 mins post-workout for optimal recovery.',
+    },
   },
   {
     time: '10:00 PM',
@@ -221,8 +233,8 @@ export const dailyRoutine = [
     details: {
       duration: '30 mins',
       cost: '₹0',
-      tip: 'Blue light kills sleep quality. Let your body cool down post-meal.'
-    }
+      tip: 'Blue light kills sleep quality. Let your body cool down post-meal.',
+    },
   },
   {
     time: '10:30 PM',
@@ -234,8 +246,8 @@ export const dailyRoutine = [
     details: {
       duration: '15 mins',
       cost: '₹0',
-      tip: 'Signal to your body that its time to sleep.'
-    }
+      tip: "Signal to your body that it's time to sleep.",
+    },
   },
   {
     time: '10:45 PM',
@@ -247,23 +259,23 @@ export const dailyRoutine = [
     details: {
       duration: '7.5 hours',
       cost: '₹0',
-      tip: 'Keep room cool and dark. Post-workout sleep boosts recovery.'
-    }
-  }
+      tip: 'Keep room cool and dark. Post-workout sleep boosts recovery.',
+    },
+  },
 ];
 
 export const routineTips = [
-  'Sleep is the cheapest performance enhancer. Prioritize 7-8 hours.',
+  'Sleep is the cheapest performance enhancer. Prioritize 7–8 hours.',
   'Sunlight in the morning is free medicine for your circadian rhythm.',
-  'Walk everywhere possible. Aim for 8,000-10,000 steps daily.',
+  'Walk everywhere possible. Aim for 8,000–10,000 steps daily.',
   'Drink water consistently. Carry a reusable bottle.',
   'Eat whole foods (dal, rice, veggies) over processed snacks.',
   'Study in focused blocks. Avoid multitasking.',
   'Connect with friends. Loneliness impacts health as much as smoking.',
   'Limit caffeine after 4 PM to protect sleep.',
   'Use free apps for meditation (Insight Timer, YouTube).',
-  'Consistency > Perfection. Dont stress if you miss a day.',
-  'Post-workout protein within 45 mins speeds up recovery.'
+  'Consistency > Perfection. Don\'t stress if you miss a day.',
+  'Post-workout protein within 45 mins speeds up recovery.',
 ];
 
 export const budgetHealthHacks = [
@@ -276,7 +288,7 @@ export const budgetHealthHacks = [
   'Sleep in a cool, dark room (no AC needed, just ventilation).',
   'Bodyweight exercises on rest days keep you consistent for free.',
   'Read books from library instead of buying.',
-  'Prep your gym bag the night before to reduce friction.'
+  'Prep your gym bag the night before to reduce friction.',
 ];
 
 export const weeklyTargets = {
@@ -286,6 +298,6 @@ export const weeklyTargets = {
   water: '20+ liters (3L/day)',
   exercise: '4 sessions (45+ mins each)',
   sunlight: '7+ hours (1 hour/day)',
-  processedSugar: 'Minimal',
-  screenTime: '< 4 hours leisure/day'
+  processedSugar: 'Minimal (avoid daily)',
+  screenTime: '< 4 hours (leisure/day)',
 };

@@ -1,0 +1,369 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageNav from '../../components/PageNavigation.astro';
+import {
+  domains,
+  principles,
+  getTechniqueCount,
+  getTotalTechniqueCount,
+} from '../../data/omnimind';
+
+const totalDomains = domains.length;
+const totalTechniques = getTotalTechniqueCount(domains);
+---
+
+<BaseLayout title="OmniMind | Universal Mastery System" description="The ultimate integrated cognitive framework — 22 domains, 170+ techniques.">
+  <style is:global>
+    :root {
+      --bg: #08080a; --surf: #0e0e10; --card: #121214; --card2: #161618;
+      --b1: #1e1e22; --b2: #2a2a2e;
+      --t1: #ddd6cc; --t2: #a89e92; --mu: #6a6260; --dim: #3a3836;
+      --gold: #e0aa40; --gold2: #f0cc72;
+      --coral: #d86848; --sage: #5a9870; --slate: #5a80a8;
+      --mauve: #9070a0; --rose: #c06080; --teal: #409898;
+      --violet: #7060c0; --amber: #d09030; --cyan: #3090a8;
+    }
+    body { background: var(--bg); color: var(--t1); font-family: 'DM Sans', sans-serif; }
+  </style>
+
+  <style>
+    .page { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+
+    /* ── SIDEBAR (desktop only) ── */
+    .sidebar {
+      background: var(--surf); border-right: 1px solid var(--b2);
+      position: sticky; top: 0; height: 100vh; overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .sidebar::-webkit-scrollbar { width: 3px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--b2); }
+
+    .sb-top { padding: 28px 20px 20px; border-bottom: 1px solid var(--b1); }
+    .sb-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+    .sb-icon { font-size: 22px; }
+    .sb-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #fff; }
+    .sb-sub { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mu); margin-top: 2px; }
+
+    .sb-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .sb-stat { background: var(--card); border: 1px solid var(--b1); padding: 8px 10px; text-align: center; }
+    .ss-num { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--gold); display: block; }
+    .ss-lbl { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mu); }
+
+    .sb-search-wrap { padding: 12px 16px; border-bottom: 1px solid var(--b1); }
+    .sb-search {
+      width: 100%; padding: 8px 12px; background: var(--card);
+      border: 1px solid var(--b2); color: var(--t1); font-size: 12px; outline: none;
+    }
+    .sb-search:focus { border-color: var(--gold); }
+    .sb-search::placeholder { color: var(--mu); }
+
+    .sb-nav { flex: 1; overflow-y: auto; padding: 8px 0 32px; }
+    .sb-nav::-webkit-scrollbar { width: 3px; }
+    .sb-nav::-webkit-scrollbar-thumb { background: var(--b2); }
+
+    .nav-group-label {
+      font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--dim); padding: 12px 20px 6px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 20px; cursor: pointer; transition: all 0.15s;
+      border-left: 2px solid transparent; text-decoration: none; color: var(--t2);
+    }
+    .nav-item:hover { background: var(--card); color: var(--t2); }
+    .nav-item.active { background: rgba(224, 170, 64, 0.07); border-left-color: var(--gold); color: var(--gold); }
+    .ni-icon { font-size: 14px; flex-shrink: 0; width: 18px; text-align: center; }
+    .ni-label { font-size: 12.5px; flex: 1; }
+    .ni-count { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--dim); }
+
+    /* ── MAIN ── */
+    .main { overflow-y: auto; height: 100vh; }
+    .main-inner { max-width: 940px; margin: 0 auto; padding: 0 40px 100px; }
+
+    .hero { padding: 60px 0 44px; border-bottom: 1px solid var(--b2); }
+    .eyebrow {
+      font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 18px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .eyebrow::after { content: ''; width: 50px; height: 1px; background: var(--gold); opacity: 0.4; }
+
+    h1.hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(52px, 6vw, 84px); font-weight: 900;
+      line-height: 0.88; letter-spacing: -0.03em; color: #fff; margin-bottom: 16px;
+    }
+    h1.hero-title em { color: var(--gold); font-style: italic; }
+    .hero-desc { font-size: 14px; color: var(--t2); max-width: 640px; line-height: 1.75; margin-bottom: 24px; }
+    .hero-origin {
+      font-family: 'DM Mono', monospace; font-size: 10px; color: var(--mu);
+      border-left: 2px solid var(--b2); padding-left: 12px; line-height: 1.6;
+    }
+
+    .marquee-wrap { border-top: 1px solid var(--b1); border-bottom: 1px solid var(--b1); padding: 12px 0; overflow: hidden; }
+    .marquee-track { display: flex; gap: 48px; white-space: nowrap; animation: mq 40s linear infinite; }
+    .marquee-track:hover { animation-play-state: paused; }
+    .mq-item { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--mu); letter-spacing: 0.06em; }
+    .mq-item span { color: var(--gold); }
+    @keyframes mq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    .sec-head {
+      display: flex; align-items: center; gap: 14px;
+      padding: 40px 0 20px; border-bottom: 1px solid var(--b2); margin-bottom: 24px;
+    }
+    .sec-icon { font-size: 26px; }
+    .sec-info { flex: 1; }
+    .sec-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: #fff; }
+    .sec-sub { font-size: 13px; color: var(--mu); font-style: italic; margin-top: 2px; }
+    .sec-badge {
+      font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em;
+      padding: 4px 12px; border: 1px solid var(--b2); color: var(--mu); white-space: nowrap;
+    }
+
+    .principles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 3px; margin-bottom: 40px; }
+    .principle-card {
+      background: var(--card); border: 1px solid var(--b1);
+      padding: 16px 18px; position: relative; overflow: hidden;
+      transition: all 0.2s;
+    }
+    .principle-card::before {
+      content: ''; position: absolute; top: 0; left: 0; bottom: 0;
+      width: 2px; background: var(--gold); opacity: 0.6;
+    }
+    .principle-card:hover { background: var(--card2); border-color: var(--b2); transform: translateX(3px); }
+    .pc-num { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--dim); margin-bottom: 6px; }
+    .pc-text { font-size: 13.5px; color: var(--t2); line-height: 1.6; }
+    .pc-text strong { color: var(--gold2); font-weight: 600; }
+
+    .overview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 3px; padding: 28px 0; }
+    .ov-card {
+      background: var(--card); border: 1px solid var(--b1);
+      padding: 18px 20px; cursor: pointer; transition: all 0.2s;
+      position: relative; overflow: hidden; text-decoration: none; color: inherit; display: block;
+    }
+    .ov-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      height: 2px; background: var(--dc, var(--gold)); opacity: 0.7;
+    }
+    .ov-card:hover { background: var(--card2); border-color: var(--b2); transform: translateY(-3px); }
+    .ov-icon { font-size: 22px; margin-bottom: 10px; display: block; }
+    .ov-name { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .ov-sub { font-size: 12px; color: var(--mu); font-style: italic; margin-bottom: 10px; }
+    .ov-cnt { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--dim); }
+
+    .cat-bar { display: none; }
+    .mobile-back { display: none; }
+
+    footer {
+      border-top: 1px solid var(--b2); padding: 28px 40px;
+      font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em;
+      color: var(--mu); display: flex; justify-content: space-between; align-items: center;
+      max-width: 940px; margin: 0 auto;
+    }
+    footer a { color: var(--mu); text-decoration: none; }
+    footer a:hover { color: var(--gold); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      .page { grid-template-columns: 1fr; }
+      .sidebar { display: none !important; }
+
+      .cat-bar {
+        display: flex; flex-wrap: nowrap !important;
+        overflow-x: auto !important; overflow-y: hidden;
+        gap: 10px; padding: 12px 16px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; white-space: nowrap;
+        background: var(--surf); border-bottom: 1px solid var(--b2);
+      }
+      .cat-bar::-webkit-scrollbar { display: none; }
+      .cat-bar .chip {
+        display: inline-flex; flex-shrink: 0;
+        padding: 10px 18px; border: 1px solid var(--b2); border-radius: 20px;
+        background: var(--card); color: var(--t2); text-decoration: none;
+        font-size: 13px; font-weight: 500; white-space: nowrap;
+        transition: all 0.2s ease;
+      }
+      .cat-bar .chip:hover, .cat-bar .chip:active {
+        background: var(--card2); border-color: var(--b1);
+      }
+
+      .main-inner { padding: 0 20px 60px; }
+      .hero { padding: 32px 0 24px; }
+      h1.hero-title { font-size: 44px; }
+      .hero-desc { font-size: 13px; }
+      .hero-origin { font-size: 9px; }
+
+      .sec-head { padding: 28px 0 16px; flex-wrap: wrap; }
+      .sec-title { font-size: 22px; }
+      .sec-sub { font-size: 12px; }
+
+      .principles-grid { grid-template-columns: 1fr; gap: 6px; }
+      .overview-grid { grid-template-columns: 1fr; gap: 8px; }
+
+      .ov-card { padding: 16px 18px; }
+      .ov-name { font-size: 15px; }
+      .ov-sub { font-size: 11px; }
+      .ov-cnt { font-size: 9px; }
+
+      .principle-card { padding: 14px 16px; }
+      .pc-text { font-size: 13px; }
+
+      footer { flex-direction: column; gap: 8px; text-align: center; padding: 24px 20px; }
+    }
+  </style>
+
+  <script>
+    function filterSidebar(q: string) {
+      const filter = q.toLowerCase().trim();
+      const items = document.querySelectorAll<HTMLElement>('#sidebarNav .nav-item');
+      items.forEach(item => {
+        const text = item.textContent?.toLowerCase() || '';
+        item.style.display = !filter || text.includes(filter) ? 'flex' : 'none';
+      });
+    }
+  </script>
+
+  <PageNav currentPage="mind" />
+
+  <div class="page">
+    <!-- Desktop sidebar -->
+    <aside class="sidebar">
+      <div class="sb-top">
+        <div class="sb-brand">
+          <span class="sb-icon">🧠</span>
+          <div>
+            <div class="sb-title">OmniMind</div>
+            <div class="sb-sub">Universal Mastery System</div>
+          </div>
+        </div>
+        <div class="sb-stats">
+          <div class="sb-stat">
+            <span class="ss-num">{totalDomains}</span>
+            <span class="ss-lbl">Domains</span>
+          </div>
+          <div class="sb-stat">
+            <span class="ss-num">{totalTechniques}+</span>
+            <span class="ss-lbl">Techniques</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sb-search-wrap">
+        <input class="sb-search" type="text" placeholder="Search domains…" oninput="filterSidebar(this.value)">
+      </div>
+
+      <nav class="sb-nav" id="sidebarNav">
+        <div class="nav-group-label">Navigation</div>
+        <a href="/mind" class="nav-item active">
+          <span class="ni-icon">🏠</span>
+          <span class="ni-label">Overview</span>
+          <span class="ni-count">{totalDomains}</span>
+        </a>
+
+        {(() => {
+          const groups = [...new Set(domains.map(d => d.group))];
+          return groups.map(group => (
+            <>
+              <div class="nav-group-label">{group}</div>
+              {domains.filter(d => d.group === group).map(d => (
+                <a href={`/mind/${d.slug}`} class="nav-item">
+                  <span class="ni-icon">{d.icon}</span>
+                  <span class="ni-label">{d.label}</span>
+                  <span class="ni-count">{d.subdomains.reduce((s, sd) => s + sd.techniques.length, 0)}</span>
+                </a>
+              ))}
+            </>
+          ));
+        })()}
+      </nav>
+    </aside>
+
+    <!-- Mobile horizontal chips -->
+    <nav class="cat-bar">
+      {domains.map(d => (
+        <a href={`/mind/${d.slug}`} class="chip">
+          {d.icon} {d.label}
+        </a>
+      ))}
+    </nav>
+
+    <!-- Main content -->
+    <main class="main">
+      <div class="main-inner">
+        <div class="hero">
+          <p class="eyebrow">Cognitive Framework</p>
+          <h1 class="hero-title">OmniMind<br><em>Universal</em> Mastery</h1>
+          <p class="hero-desc">
+            The ultimate integrated cognitive framework combining mental performance training,
+            accelerated learning, social influence, environmental intelligence, and resource
+            strategy into one cohesive architecture.
+          </p>
+          <p class="hero-origin">
+            Synthesized from Cognitive Science · Sports Psychology · Neuroscience · Behavioral
+            Psychology · Systems Theory · Linguistics · Environmental Psychology
+          </p>
+        </div>
+
+        <div class="marquee-wrap">
+          <div class="marquee-track">
+            {[...principles, ...principles].map(p => {
+              const clean = p.text.replace(/\*\*(.*?)\*\*/g, '$1');
+              const [bold, ...rest] = clean.split(':');
+              return (
+                <span class="mq-item">
+                  <span>{bold}</span>{rest.length ? ':' + rest.join(':') : ''} &nbsp; ✦ &nbsp;
+                </span>
+              );
+            })}
+          </div>
+        </div>
+
+        <div class="sec-head">
+          <span class="sec-icon">🧠</span>
+          <div class="sec-info">
+            <div class="sec-title">Key Principles</div>
+            <div class="sec-sub">12 foundational laws of cognitive mastery</div>
+          </div>
+        </div>
+
+        <div class="principles-grid">
+          {principles.map((p, i) => (
+            <div class="principle-card">
+              <div class="pc-num">{String(i + 1).padStart(2, '0')}</div>
+              <div class="pc-text" set:html={p.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')}></div>
+            </div>
+          ))}
+        </div>
+
+        <div class="sec-head">
+          <span class="sec-icon">🗂️</span>
+          <div class="sec-info">
+            <div class="sec-title">All Domains</div>
+            <div class="sec-sub">Click any domain to explore techniques</div>
+          </div>
+          <span class="sec-badge">{totalDomains} domains · {totalTechniques}+ techniques</span>
+        </div>
+
+        <div class="overview-grid">
+          {domains.map(d => {
+            const tc = d.subdomains.reduce((s, sd) => s + sd.techniques.length, 0);
+            return (
+              <a href={`/mind/${d.slug}`} class="ov-card" style={`--dc:${d.color}`}>
+                <span class="ov-icon">{d.icon}</span>
+                <div class="ov-name">{d.label}</div>
+                <div class="ov-sub">{d.sub}</div>
+                <div class="ov-cnt">{tc} techniques · {d.subdomains.length} sub-domains</div>
+              </a>
+            );
+          })}
+        </div>
+
+        <footer>
+          <a href="/">← back to home</a>
+          <span>OmniMind · {totalDomains} domains · {totalTechniques}+ techniques</span>
+        </footer>
+      </div>
+    </main>
+  </div>
+</BaseLayout>

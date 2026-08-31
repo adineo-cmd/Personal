@@ -5,86 +5,300 @@ import { linksData } from '../data/links';
 ---
 
 <BaseLayout title="Links | Aditya Yadav" description="All my links and online presences">
+  <style>
+    :root{
+      --bg:#08080a;--surf:#0e0e10;--card:#121214;--card2:#161618;
+      --b1:#1e1e22;--b2:#2a2a2e;
+      --t1:#ddd6cc;--t2:#a89e92;--mu:#6a6260;--dim:#3a3836;
+      --gold:#e0aa40;--gold2:#f0cc72;
+      --coral:#d86848;--sage:#5a9870;--slate:#5a80a8;
+      --pnav-height: 56px;
+    }
+    
+    *{margin:0;padding:0;box-sizing:border-box;}
+    
+    .page{display:grid;grid-template-columns:280px 1fr;min-height:100vh;}
+    
+    .sidebar{background:var(--surf);border-right:1px solid var(--b2);padding:40px 0;height:100vh;overflow-y:auto;position:sticky;top:0;}
+    .sidebar::-webkit-scrollbar{width:3px;}
+    .sidebar::-webkit-scrollbar-track{background:transparent;}
+    .sidebar::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px;}
+    
+    .sb-head{padding:0 24px 24px;border-bottom:1px solid var(--b1);margin-bottom:16px;}
+    .sb-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:4px;}
+    .sb-sub{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--mu);}
+    
+    .sb-search-wrap{padding:0 16px 16px;border-bottom:1px solid var(--b1);margin-bottom:8px;}
+    .sb-search{width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--b2);color:var(--t1);font-size:12px;outline:none;}
+    .sb-search:focus{border-color:var(--gold);}
+    .sb-search::placeholder{color:var(--mu);}
+    
+    .toc-item{display:flex;align-items:center;gap:10px;padding:7px 24px;cursor:pointer;transition:all .15s;text-decoration:none;color:var(--mu);font-size:13px;}
+    .toc-item:hover{background:var(--card);color:var(--t2);}
+    .toc-item.active{background:rgba(224,170,64,.07);color:var(--gold);border-left:2px solid var(--gold);}
+    .toc-num{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);width:20px;}
+    .toc-label{flex:1;font-size:12px;}
+    .toc-count{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);}
+    
+    .main-content{padding:60px 48px 80px;max-width:900px;}
+    
+    .eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;}
+    
+    h1{font-family:'Playfair Display',serif;font-size:clamp(48px,8vw,80px);font-weight:900;line-height:.9;color:#fff;margin-bottom:12px;}
+    h1 span{color:var(--gold);font-style:italic;}
+    
+    .hd-meta{font-family:'DM Mono',monospace;font-size:10px;color:var(--mu);margin-bottom:12px;}
+    .hd-desc{font-size:14px;color:var(--t2);line-height:1.6;max-width:600px;}
+    
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--b2);margin:28px 0 40px;}
+    .stat{padding:14px 16px;border-right:1px solid var(--b2);}
+    .stat:last-child{border-right:none;}
+    .sn{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;display:block;margin-bottom:2px;}
+    .stat:nth-child(1) .sn{color:var(--gold);}
+    .stat:nth-child(2) .sn{color:var(--sage);}
+    .stat:nth-child(3) .sn{color:var(--slate);}
+    .sl{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--mu);}
+    
+    .cat-section{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--b2);}
+    .cat-section:last-of-type{border-bottom:none;}
+    
+    .cat-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;margin-bottom:6px;}
+    .cat-sub{font-size:12px;color:var(--mu);font-style:italic;margin-bottom:14px;}
+    
+    .link-list{display:flex;flex-direction:column;gap:8px;}
+    .link-item{padding:6px 0;}
+    .link-item a{color:var(--t1);text-decoration:none;font-family:'DM Mono',monospace;font-size:13.5px;transition:color .15s;}
+    .link-item a:hover{color:var(--gold);}
+    .link-item span{color:var(--t2);font-size:12.5px;margin-left:6px;}
+    
+    footer{padding:32px 48px;border-top:1px solid var(--b2);font-family:'DM Mono',monospace;font-size:10px;color:var(--mu);}
+    footer a{color:var(--mu);text-decoration:none;}
+    footer a:hover{color:var(--gold);}
+    
+    .sidebar-overlay{display:none;}
+    
+    /* Horizontal category bar - hidden on desktop */
+    .cat-bar{display:none;}
+    
+    /* Mobile Styles */
+    @media(max-width:768px){
+      .page{grid-template-columns:1fr;}
+      
+      /* COMPLETELY HIDE vertical sidebar on mobile */
+      .sidebar{
+        display: none !important;
+      }
+      
+      .sidebar-overlay{
+        display: none !important;
+      }
+      
+      /* Show horizontal category bar on mobile */
+      .cat-bar{
+        display: flex;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: hidden;
+        gap: 10px;
+        padding: 12px 16px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        width: 100%;
+        white-space: nowrap;
+        background: var(--surf);
+        border-bottom: 1px solid var(--b2);
+      }
+      
+      .cat-bar::-webkit-scrollbar{
+        display: none;
+      }
+      
+      .cat-bar .toc-item{
+        display: inline-flex !important;
+        flex-shrink: 0;
+        flex-wrap: nowrap;
+        padding: 10px 18px;
+        border: 1px solid var(--b2);
+        border-radius: 20px;
+        background: var(--card);
+        border-left: none;
+        gap: 8px;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        min-width: max-content;
+        max-width: fit-content;
+      }
+      
+      .cat-bar .toc-item:hover{
+        background: var(--card2);
+        border-color: var(--b1);
+        color: var(--t2);
+      }
+      
+      .cat-bar .toc-item.active{
+        background: rgba(224, 170, 64, 0.15);
+        color: var(--gold);
+        border-color: var(--gold);
+      }
+      
+      .cat-bar .toc-num,
+      .cat-bar .toc-count{
+        display: none;
+      }
+      
+      .cat-bar .toc-label{
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+      }
+      
+      .main-content{
+        padding: 24px 20px 60px;
+      }
+      
+      h1{font-size: 40px;}
+      
+      .stats{grid-template-columns: repeat(2, 1fr);}
+      .stat:nth-child(3){display: none;}
+      
+      .cat-title{font-size: 18px;}
+      .cat-sub{font-size: 11px;}
+      
+      .link-item a{font-size: 13px;}
+      .link-item span{font-size: 12px;}
+    }
+    
+    @media(max-width: 480px){
+      .cat-bar{
+        gap: 8px;
+        padding: 10px 12px;
+      }
+      
+      .cat-bar .toc-item{
+        padding: 8px 14px;
+      }
+      
+      .cat-bar .toc-label{
+        font-size: 12px;
+      }
+      
+      .main-content{
+        padding: 20px 16px 48px;
+      }
+      
+      h1{font-size: 36px;}
+    }
+  </style>
+
+  <script>
+    function filterTOC(q){
+      const items = document.querySelectorAll('.sidebar nav .toc-item');
+      const sections = document.querySelectorAll('.cat-section');
+      const filter = q.toLowerCase();
+      
+      items.forEach((item, idx) => {
+        const text = item.querySelector('.toc-label').textContent.toLowerCase();
+        if(text.includes(filter)){
+          item.style.display = 'flex';
+          if(sections[idx]) sections[idx].style.display = 'block';
+        } else {
+          item.style.display = 'none';
+          if(sections[idx]) sections[idx].style.display = 'none';
+        }
+      });
+    }
+  </script>
+
   <>
     <PageNav currentPage="links" />
 
-    <div class="min-h-screen bg-[#0f0f0f]">
-      <div 
-        class="text-zinc-400 py-16 px-6"
-        style="font-family: 'Courier New', Courier, monospace;"
-      >
-        <div class="max-w-5xl mx-auto">
-          <h1 class="text-5xl font-serif mb-6 text-zinc-200">Links</h1>
-          
-          <p class="text-xs text-zinc-500 mb-2">Updated: February 05, 2026</p>
-          
-          <p class="text-zinc-400 text-sm mb-8 leading-relaxed">
-            A curated collection of all my online presences, projects, and resources. 
-            Organized by category for easy navigation.
-          </p>
+    <div class="page">
+      <!-- Vertical Sidebar - Desktop ONLY -->
+      <aside class="sidebar">
+        <div class="sb-head">
+          <div class="sb-title">Categories</div>
+          <div class="sb-sub">{linksData.categories.length} Categories</div>
+        </div>
+        <div class="sb-search-wrap">
+          <input class="sb-search" type="text" placeholder="Filter categories…" oninput="filterTOC(this.value)">
+        </div>
+        <nav>
+          {linksData.categories.map((category, idx) => (
+            <a 
+              href={`#category-${idx}`}
+              class="toc-item"
+            >
+              <span class="toc-num">{String(idx + 1).padStart(2, '0')}</span>
+              <span class="toc-label">{category.title}</span>
+              <span class="toc-count">{category.links.length}</span>
+            </a>
+          ))}
+        </nav>
+      </aside>
 
-          {/* ASCII Art Section */}
-          <pre class="text-zinc-500 text-sm mb-8 whitespace-pre font-mono">
-{linksData.asciiArt}
-          </pre>
+      <!-- Horizontal Category Bar - Mobile ONLY -->
+      <nav class="cat-bar">
+        {linksData.categories.map((category, idx) => (
+          <a 
+            href={`#category-${idx}`}
+            class="toc-item"
+          >
+            <span class="toc-label">{category.title}</span>
+          </a>
+        ))}
+      </nav>
 
-          {/* Table of Contents Section */}
-          <div class="mb-10">
-            <h2 class="text-2xl font-medium text-zinc-200 mb-4">Table of Contents</h2>
-            <ol class="list-decimal list-inside space-y-2 pl-4 border-l-2 border-zinc-800/50 py-2">
-              {linksData.categories.map((category, catIndex) => (
-                <li key={catIndex} class="text-zinc-400 py-1">
-                  <a 
-                    href={`#category-${catIndex}`} 
-                    class="text-zinc-300 hover:text-zinc-100 transition-colors hover:underline"
-                  >
-                    {category.title}
-                  </a>
-                </li>
-              ))}
-            </ol>
+      <!-- Main Content -->
+      <main class="main-content">
+        <p class="eyebrow">Resource Directory</p>
+        <h1>Lin<span>ks</span></h1>
+        <p class="hd-meta">Updated — February 05, 2026</p>
+        <p class="hd-desc">
+          A curated collection of all my online presences, projects, and resources. 
+          Organized by category for easy navigation.
+        </p>
+
+        <div class="stats">
+          <div class="stat">
+            <span class="sn">{linksData.categories.length}</span>
+            <span class="sl">Categories</span>
           </div>
+          <div class="stat">
+            <span class="sn">{linksData.categories.reduce((acc, cat) => acc + cat.links.length, 0)}+</span>
+            <span class="sl">Links</span>
+          </div>
+          <div class="stat">
+            <span class="sn">2026</span>
+            <span class="sl">Last Updated</span>
+          </div>
+        </div>
 
-          {linksData.categories.map((category, catIndex) => (
-            <div class="mb-10 border-b border-zinc-800/50 pb-8 last:border-0 last:pb-0" key={catIndex}>
-              {/* Anchor point for table of contents */}
-              <h2 id={`category-${catIndex}`} class="text-2xl font-medium text-zinc-200 mb-3">{category.title}</h2>
-              {category.description && (
-                <p class="text-zinc-500 text-sm mb-4 leading-relaxed">
-                  {category.description}
-                </p>
-              )}
-              
+        {linksData.categories.map((category, catIndex) => (
+          <div class="cat-section" id={`category-${catIndex}`} key={catIndex}>
+            <h2 class="cat-title">{category.title}</h2>
+            {category.description && (
+              <p class="cat-sub">{category.description}</p>
+            )}
+            <div class="link-list">
               {category.links.map((link, linkIndex) => (
-                <p key={linkIndex} class="text-zinc-400 mb-1">
-                  <a 
-                    href={link.url.trim()}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-zinc-300 hover:text-zinc-100 transition-colors hover:underline"
-                  >
+                <div class="link-item" key={linkIndex}>
+                  <a href={link.url.trim()} target="_blank" rel="noopener noreferrer">
                     {link.name}
-                  </a> - {link.description}
-                </p>
+                  </a>
+                  <span>— {link.description}</span>
+                </div>
               ))}
             </div>
-          ))}
-        </div>
-      </div>
-
-      <div class="border-t border-zinc-800/50 py-6">
-        <div class="max-w-5xl mx-auto px-6">
-          <a
-            href="/"
-            class="flex items-center gap-2 text-zinc-500 hover:text-zinc-300 transition-colors text-sm"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
-            </svg>
-            Back to Home
-          </a>
-        </div>
-      </div>
+          </div>
+        ))}
+      </main>
     </div>
+
+    <footer>
+      <a href="/">← back to home</a>
+      <span style="margin-left:8px">· resource directory · {linksData.categories.length} categories</span>
+    </footer>
   </>
 </BaseLayout>

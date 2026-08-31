@@ -10,8 +10,8 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.7.0",
-    "astro": "^5.17.2",
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^7.2.2",
     "marked": "^17.0.1"
   },
   "devDependencies": {
@@ -19,5 +19,18 @@
     "postcss": "^8.4.32",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.0"
-  }
+  },
+  "description": "A minimal, reflective, and deeply personal portfolio built with **Astro**, **Tailwind CSS**, and a love for clean aesthetics.",
+  "main": "tailwind.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adineo-cmd/personal.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adineo-cmd/personal/issues"
+  },
+  "homepage": "https://github.com/adineo-cmd/personal#readme"
 }

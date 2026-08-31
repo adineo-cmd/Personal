@@ -2,31 +2,41 @@
 // src/pages/routine.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageNavigation from '../components/PageNavigation.astro';
-import { dailyRoutine, routineTips, budgetHealthHacks, weeklyTargets } from '../data/routine.js';
+import {
+  dailyRoutine,
+  routineTips,
+  budgetHealthHacks,
+  weeklyTargets,
+} from '../data/routine.js';
 
-// Group routine by period
-const groupedRoutine = dailyRoutine.reduce((acc, item) => {
-  if (!acc[item.period]) {
-    acc[item.period] = [];
-  }
-  acc[item.period].push(item);
+const PERIOD_ORDER = ['Morning', 'Midday', 'Afternoon', 'Evening', 'Night'];
+
+const groupedRoutine = PERIOD_ORDER.reduce((acc, period) => {
+  acc[period] = dailyRoutine.filter((item) => item.period === period);
   return acc;
-}, {});
+}, {} as Record<string, typeof dailyRoutine>);
 
-// Priority badge colors
-const priorityColors = {
-  high: 'bg-green-500/20 text-green-400 border-green-500/30',
-  medium: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-  low: 'bg-zinc-500/20 text-zinc-400 border-zinc-500/30'
+const periodMeta: Record<string, { color: string; icon: string; label: string }> = {
+  Morning:   { color: '#e0aa40', icon: '🌅', label: 'morning' },
+  Midday:    { color: '#5a9870', icon: '☀️', label: 'midday' },
+  Afternoon: { color: '#d86848', icon: '🌤️', label: 'afternoon' },
+  Evening:   { color: '#5a80a8', icon: '🌇', label: 'evening' },
+  Night:     { color: '#9070a0', icon: '🌙', label: 'night' },
 };
 
-// Period colors for section headers
-const periodColors = {
-  Morning: 'border-orange-500/50',
-  Midday: 'border-yellow-500/50',
-  Afternoon: 'border-amber-500/50',
-  Evening: 'border-purple-500/50',
-  Night: 'border-indigo-500/50'
+const targetColors: Record<string, string> = {
+  sleep: '#9070a0', work: '#5a80a8', steps: '#5a9870', water: '#409898',
+  exercise: '#d86848', sunlight: '#e0aa40', processedSugar: '#c06080', screenTime: '#6a6260',
+};
+
+// "processedSugar" -> "Processed Sugar"
+const formatKey = (key: string) =>
+  key.replace(/([A-Z])/g, ' $1').replace(/^./, (c) => c.toUpperCase()).trim();
+
+// "50+ hours (7+ hours/night)" -> { main: "50+ hours", sub: "7+ hours/night" }
+const parseTarget = (value: string) => {
+  const m = String(value).match(/^([^(]+)(?:\((.*)\))?$/);
+  return { main: (m?.[1] ?? String(value)).trim(), sub: (m?.[2] ?? '').trim() };
 };
 ---
 
@@ -34,204 +44,511 @@ const periodColors = {
   <>
     <PageNavigation currentPage="routine" />
 
-    <div class="min-h-screen bg-zinc-950 relative">
-      <div class="relative z-10 text-zinc-400" style="font-family: 'Courier New', Courier, monospace;">
-        <div class="py-8 px-4 md:px-6">
-          <div class="max-w-5xl mx-auto">
-            <h1 class="text-3xl md:text-4xl font-serif mb-2 text-zinc-200">Daily Routine</h1>
-            <p class="text-zinc-500 text-xs md:text-sm mb-8">
-              Friendly Longevity • Indian Standard Time (IST) • Wake: 8:30 AM
-            </p>
+    <!-- GLOBAL (namespaced) styles so Astro scoping + Tailwind can't break them -->
+    <style is:global>
+      @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@300;400&display=swap');
 
-            <!-- Current Time & Progress -->
-            <div class="grid md:grid-cols-2 gap-4 mb-8">
-              <div class="p-4 rounded bg-zinc-900/50 border border-zinc-800">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs text-zinc-500 uppercase tracking-wider">Current IST</span>
-                  <span id="current-time" class="text-lg text-zinc-200 font-bold">--:--</span>
-                </div>
-              </div>
-              <div class="p-4 rounded bg-zinc-900/50 border border-zinc-800">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs text-zinc-500 uppercase tracking-wider">Day Progress</span>
-                  <span id="progress-text" class="text-lg text-zinc-200 font-bold">0%</span>
-                </div>
-                <div class="mt-2 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-                  <div id="progress-bar" class="h-full bg-gradient-to-r from-zinc-600 to-zinc-400 rounded-full" style="width: 0%"></div>
-                </div>
-              </div>
-            </div>
+      /* ── tokens ── */
+      .routine-page {
+        --bg:#08080a; --surf:#0e0e10; --card:#121214; --card2:#161618;
+        --b1:#1e1e22; --b2:#2a2a2e;
+        --t1:#ddd6cc; --t2:#a89e92; --mu:#6a6260; --dim:#3a3836;
+        --gold:#e0aa40; --gold2:#f0cc72;
+        --coral:#d86848; --sage:#5a9870; --slate:#5a80a8;
+        --mauve:#9070a0; --rose:#c06080;
+      }
 
-            <!-- Weekly Targets -->
-            <div class="mb-10 p-5 rounded bg-zinc-900/50 border border-zinc-800/50">
-              <h3 class="text-xs font-bold text-zinc-300 mb-4 uppercase tracking-wider flex items-center gap-2">
-                <span>📊</span> Weekly Targets
-              </h3>
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {Object.entries(weeklyTargets).map(([key, value]) => (
-                  <div class="p-3 rounded bg-zinc-950/50 border border-zinc-800/50">
-                    <div class="text-[10px] text-zinc-500 uppercase mb-1">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
-                    <div class="text-xs text-zinc-300 font-mono">{value}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
+      /* ── reset (scoped to this page only) ── */
+      .routine-page, .routine-page *, .routine-page *::before, .routine-page *::after { box-sizing:border-box; }
+      .routine-page h1, .routine-page h2, .routine-page h3,
+      .routine-page p, .routine-page ul, .routine-page li, .routine-page a { margin:0; }
+      .routine-page ul { padding:0; list-style:none; }
 
-            <!-- Routine by Period -->
-            {Object.entries(groupedRoutine).map(([period, items]) => (
-              <div class="mb-10">
-                <h2 class={`text-sm font-bold text-zinc-300 uppercase tracking-widest mb-4 border-b pb-2 ${periodColors[period] || 'border-zinc-800/50'}`}>
-                  {period}
-                </h2>
-                
-                <div class="space-y-3">
-                  {items.map((item, idx) => (
-                    <div 
-                      class="routine-item p-4 rounded bg-zinc-900/50 border-l-4 
-                        ${item.priority === 'high' ? 'border-green-500/50' : 
-                          item.priority === 'medium' ? 'border-yellow-500/50' : 
-                          'border-zinc-500/50'}"
-                    >
-                      <div class="flex items-start gap-3">
-                        <span class="text-2xl">{item.icon}</span>
-                        
-                        <div class="flex-1">
-                          <div class="flex items-center gap-2 mb-1 flex-wrap">
-                            <span class="text-xs text-zinc-500 font-mono bg-zinc-950/50 px-2 py-0.5 rounded">{item.time}</span>
-                            <span class="text-[10px] px-1.5 py-0.5 rounded border ${priorityColors[item.priority]} uppercase tracking-wider">
-                              {item.priority}
-                            </span>
-                            {item.details?.cost && (
-                              <span class="text-[10px] text-zinc-600">💰 {item.details.cost}</span>
-                            )}
-                            {item.details?.duration && (
-                              <span class="text-[10px] text-zinc-600">⏱ {item.details.duration}</span>
-                            )}
-                          </div>
-                          
-                          <h3 class="text-base text-zinc-200 font-bold mb-1">{item.title}</h3>
-                          <p class="text-xs text-zinc-500 mb-2">{item.description}</p>
-                          
-                          {/* Details always visible (no hover) */}
-                          {item.details?.tip && (
-                            <div class="mt-3 pt-3 border-t border-zinc-800/50">
-                              <span class="text-[10px] text-zinc-600 uppercase">💡 Tip:</span>
-                              <p class="text-xs text-zinc-400 mt-0.5">{item.details.tip}</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+      /* ── layout ── */
+      .routine-page {
+        display:grid; grid-template-columns:260px 1fr; min-height:100vh;
+        background:var(--bg); color:var(--t1);
+        font-family:'DM Sans', sans-serif; font-size:15px; line-height:1.7;
+        position:relative;
+      }
+      .routine-page::before {
+        content:''; position:fixed; inset:0; pointer-events:none; z-index:5;
+        background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      }
 
-            <!-- Budget Health Hacks -->
-            <div class="mb-10 p-5 rounded bg-zinc-900/50 border border-zinc-800/50">
-              <h3 class="text-xs font-bold text-zinc-300 mb-4 uppercase tracking-wider flex items-center gap-2">
-                <span>💰</span> Budget Health Hacks
-              </h3>
-              <div class="grid md:grid-cols-2 gap-4">
-                {budgetHealthHacks.map((hack, idx) => (
-                  <div class="flex items-start gap-2 text-xs text-zinc-400" key={idx}>
-                    <span class="text-green-500 mt-0.5">✓</span>
-                    <span>{hack}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+      /* ── sidebar ── */
+      .routine-page .sidebar {
+        background:var(--surf); border-right:1px solid var(--b2);
+        display:flex; flex-direction:column; position:sticky; top:0;
+        height:100vh; overflow:hidden; z-index:10;
+      }
+      .routine-page .sb-top { padding:32px 24px 24px; border-bottom:1px solid var(--b1); }
+      .routine-page .eyebrow {
+        font-family:'DM Mono', monospace; font-size:9px; letter-spacing:.28em;
+        text-transform:uppercase; color:var(--gold); margin-bottom:14px;
+        display:flex; align-items:center; gap:8px;
+      }
+      .routine-page .eyebrow::after { content:''; flex:1; max-width:30px; height:1px; background:var(--gold); opacity:.4; }
+      .routine-page .sb-h1 {
+        font-family:'Playfair Display', serif; font-size:26px; font-weight:900;
+        line-height:.92; letter-spacing:-.02em; color:#fff; margin-bottom:6px;
+      }
+      .routine-page .sb-h1 em { color:var(--gold); font-style:italic; }
+      .routine-page .sb-meta { font-size:11px; color:var(--mu); font-style:italic; }
 
-            <!-- Pro Tips -->
-            <div class="mb-10 p-5 rounded bg-zinc-900/50 border border-zinc-800/50">
-              <h3 class="text-xs font-bold text-zinc-300 mb-4 uppercase tracking-wider flex items-center gap-2">
-                <span>💡</span> Pro Tips
-              </h3>
-              <ul class="space-y-2">
-                {routineTips.map((tip, idx) => (
-                  <li class="flex items-start gap-2 text-xs text-zinc-400" key={idx}>
-                    <span class="text-zinc-600 mt-0.5">•</span>
-                    <span>{tip}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
+      .routine-page .clock-box { margin:20px 0 0; background:var(--card); border:1px solid var(--b1); padding:16px 18px; }
+      .routine-page .clock-label { font-family:'DM Mono', monospace; font-size:8px; letter-spacing:.2em; text-transform:uppercase; color:var(--mu); margin-bottom:6px; }
+      .routine-page .clock-time { font-family:'Playfair Display', serif; font-size:32px; font-weight:700; color:#fff; line-height:1; letter-spacing:-.02em; }
+      .routine-page .clock-date { font-family:'DM Mono', monospace; font-size:10px; color:var(--mu); margin-top:4px; letter-spacing:.06em; }
 
-        <!-- Back Button -->
-        <div class="border-t border-zinc-800/50 py-3">
-          <div class="max-w-7xl mx-auto px-4">
-            <a
-              href="/"
-              class="inline-flex items-center gap-1.5 text-zinc-500 text-xs"
-              aria-label="Navigate back to homepage"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="19" y1="12" x2="5" y2="12" />
-                <polyline points="12 19 5 12 12 5" />
-              </svg>
-              Back to Home
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
+      .routine-page .progress-box { margin:8px 0 0; background:var(--card); border:1px solid var(--b1); padding:14px 18px; }
+      .routine-page .pb-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
+      .routine-page .pb-label { font-family:'DM Mono', monospace; font-size:8px; letter-spacing:.2em; text-transform:uppercase; color:var(--mu); }
+      .routine-page .pb-pct { font-family:'Playfair Display', serif; font-size:22px; font-weight:700; color:var(--gold); line-height:1; }
+      .routine-page .pb-track { height:4px; background:var(--b2); border-radius:2px; overflow:hidden; }
+      .routine-page .pb-fill { height:100%; background:linear-gradient(90deg,var(--gold),var(--coral)); border-radius:2px; transition:width 1s ease; }
+      .routine-page .pb-sub { font-family:'DM Mono', monospace; font-size:9px; color:var(--dim); margin-top:6px; letter-spacing:.04em; }
 
-    <style>
-      @media (max-width: 768px) {
-        .routine-item {
-          padding: 0.75rem;
+      .routine-page .current-box { margin:8px 0 0; background:rgba(224,170,64,.06); border:1px solid rgba(224,170,64,.2); padding:12px 16px; }
+      .routine-page .current-box.idle { background:var(--card); border-color:var(--b1); }
+      .routine-page .cur-label {
+        font-family:'DM Mono', monospace; font-size:8px; letter-spacing:.18em;
+        text-transform:uppercase; color:var(--gold); margin-bottom:6px;
+        display:flex; align-items:center; gap:6px;
+      }
+      .routine-page .current-box.idle .cur-label { color:var(--mu); }
+      .routine-page .cur-dot { width:6px; height:6px; border-radius:50%; background:var(--gold); animation:drPulse 2s ease infinite; }
+      .routine-page .current-box.idle .cur-dot { animation:none; background:var(--mu); }
+      .routine-page .cur-name { font-family:'Playfair Display', serif; font-size:15px; font-weight:700; color:#fff; line-height:1.25; margin-bottom:2px; }
+      .routine-page .cur-time { font-family:'DM Mono', monospace; font-size:10px; color:var(--mu); }
+
+      .routine-page .sb-nav { flex:1; overflow-y:auto; padding:12px 0 32px; }
+      .routine-page .sb-nav::-webkit-scrollbar { width:3px; }
+      .routine-page .sb-nav::-webkit-scrollbar-thumb { background:var(--b2); }
+      .routine-page .nav-section-label { font-family:'DM Mono', monospace; font-size:8px; letter-spacing:.22em; text-transform:uppercase; color:var(--dim); padding:10px 24px 5px; }
+      .routine-page .nav-link {
+        display:flex; align-items:center; gap:10px; padding:7px 24px;
+        cursor:pointer; transition:all .15s; border-left:2px solid transparent;
+        text-decoration:none; color:var(--mu);
+      }
+      .routine-page .nav-link:hover { background:var(--card); color:var(--t2); }
+      .routine-page .nav-link.active-sec { border-left-color:var(--section-c); color:var(--t1); background:var(--card); }
+      .routine-page .nl-dot { width:8px; height:8px; border-radius:50%; background:var(--section-c); flex-shrink:0; }
+      .routine-page .nl-label { font-size:12.5px; }
+      .routine-page .nl-count { font-family:'DM Mono', monospace; font-size:9px; color:var(--dim); margin-left:auto; }
+      .routine-page .quick-stats { padding:8px 24px; font-family:'DM Mono', monospace; font-size:10px; color:var(--mu); line-height:1.8; }
+
+      /* ── main ── */
+      .routine-page .main-content { padding:56px 48px 100px; max-width:860px; position:relative; z-index:6; }
+
+      .routine-page .wt-section { margin-bottom:48px; }
+      .routine-page .sec-head { display:flex; align-items:center; gap:14px; padding-bottom:14px; border-bottom:1px solid var(--b2); margin-bottom:20px; }
+      .routine-page .sh-icon { font-size:18px; }
+      .routine-page .sh-title { font-family:'Playfair Display', serif; font-size:20px; font-weight:700; color:#fff; letter-spacing:-.01em; }
+      .routine-page .sh-line { flex:1; height:1px; background:linear-gradient(90deg,var(--b2),transparent); }
+
+      .routine-page .wt-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:3px; }
+      .routine-page .wt-card { background:var(--card); border:1px solid var(--b1); padding:14px 16px; position:relative; overflow:hidden; transition:all .2s; }
+      .routine-page .wt-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--wc,var(--gold)); opacity:.7; }
+      .routine-page .wt-card:hover { background:var(--card2); border-color:var(--b2); }
+      .routine-page .wt-label { font-family:'DM Mono', monospace; font-size:8px; letter-spacing:.18em; text-transform:uppercase; color:var(--mu); margin-bottom:7px; }
+      .routine-page .wt-val { font-family:'Playfair Display', serif; font-size:16px; font-weight:700; color:#fff; line-height:1.3; }
+      .routine-page .wt-val-sub { font-size:12px; color:var(--mu); font-family:'DM Sans', sans-serif; font-weight:300; }
+
+      /* ── time blocks ── */
+      .routine-page .time-block { margin-bottom:52px; scroll-margin-top:8px; }
+      .routine-page .tb-head {
+        display:flex; align-items:center; gap:16px; padding:8px 0 14px;
+        border-bottom:2px solid var(--block-c); margin-bottom:24px;
+        position:sticky; top:0; background:var(--bg); z-index:8;
+      }
+      .routine-page .tb-icon { font-size:20px; }
+      .routine-page .tb-label { font-family:'Playfair Display', serif; font-size:22px; font-weight:900; color:#fff; letter-spacing:-.01em; }
+      .routine-page .tb-time-range { font-family:'DM Mono', monospace; font-size:10px; color:var(--block-c); letter-spacing:.1em; margin-left:auto; }
+      .routine-page .tb-count { font-family:'DM Mono', monospace; font-size:9px; color:var(--dim); padding:3px 9px; border:1px solid var(--b2); }
+
+      /* ── activity timeline ── */
+      .routine-page .activity { display:grid; grid-template-columns:auto 1fr; gap:0 20px; margin-bottom:4px; animation:drFadeUp .5s forwards; opacity:0; }
+
+      .routine-page .act-time-col { display:flex; flex-direction:column; align-items:center; width:56px; }
+      .routine-page .act-line { flex:1; width:1px; background:var(--b1); margin-top:4px; min-height:20px; }
+      .routine-page .act-dot {
+        width:10px; height:10px; border-radius:50%; background:var(--block-c);
+        border:2px solid var(--bg); box-shadow:0 0 0 1px var(--block-c);
+        margin-top:14px; flex-shrink:0; transition:transform .2s;
+      }
+      .routine-page .activity:hover .act-dot { transform:scale(1.4); }
+
+      .routine-page .act-card {
+        background:var(--card); border:1px solid var(--b1);
+        padding:18px 22px; margin-bottom:3px; position:relative;
+        overflow:hidden; transition:all .25s;
+      }
+      .routine-page .act-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--block-c); opacity:.7; }
+      .routine-page .act-card:hover { background:var(--card2); border-color:var(--b2); }
+      .routine-page .act-card.now-active { background:rgba(224,170,64,.04); border-color:rgba(224,170,64,.25); }
+      .routine-page .act-card.now-active::before { opacity:1; }
+
+      .routine-page .now-badge {
+        position:absolute; top:12px; right:14px;
+        font-family:'DM Mono', monospace; font-size:8px; letter-spacing:.15em;
+        text-transform:uppercase; padding:2px 8px;
+        background:rgba(224,170,64,.12); color:var(--gold);
+        border:1px solid rgba(224,170,64,.3); border-radius:20px; display:none;
+      }
+      .routine-page .act-card.now-active .now-badge { display:block; }
+
+      .routine-page .act-top { display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap; }
+      .routine-page .act-icon { font-size:20px; flex-shrink:0; }
+      .routine-page .act-meta-time { font-family:'DM Mono', monospace; font-size:10px; color:var(--mu); letter-spacing:.06em; }
+
+      .routine-page .prio {
+        font-family:'DM Mono', monospace; font-size:8px; font-weight:600;
+        letter-spacing:.1em; text-transform:uppercase; padding:2px 9px; border-radius:20px;
+      }
+      .routine-page .p-high   { background:rgba(216,104,72,.12); color:var(--coral); border:1px solid rgba(216,104,72,.3); }
+      .routine-page .p-medium { background:rgba(224,170,64,.1);  color:var(--gold);  border:1px solid rgba(224,170,64,.25); }
+      .routine-page .p-low    { background:rgba(90,152,112,.1);  color:var(--sage);  border:1px solid rgba(90,152,112,.25); }
+
+      .routine-page .act-chips { display:flex; gap:6px; align-items:center; margin-left:auto; flex-wrap:wrap; }
+      .routine-page .chip { font-family:'DM Mono', monospace; font-size:9px; color:var(--dim); display:flex; align-items:center; gap:4px; }
+
+      .routine-page .act-name { font-family:'Playfair Display', serif; font-size:18px; font-weight:700; color:#fff; line-height:1.25; margin-bottom:5px; letter-spacing:-.01em; }
+      .routine-page .act-desc { font-size:13.5px; color:var(--t2); line-height:1.65; }
+
+      .routine-page .act-tip {
+        margin-top:12px; padding-top:11px; border-top:1px solid var(--b1);
+        font-size:12.5px; color:var(--mu); font-style:italic;
+        display:flex; align-items:flex-start; gap:8px; line-height:1.5;
+      }
+      .routine-page .act-tip::before { content:'💡'; font-size:12px; flex-shrink:0; font-style:normal; margin-top:1px; }
+
+      /* ── extras ── */
+      .routine-page .extra-section { margin-bottom:40px; background:var(--card); border:1px solid var(--b1); padding:22px 24px; position:relative; }
+      .routine-page .extra-section::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--sage); opacity:.7; }
+      .routine-page .extra-title { font-family:'Playfair Display', serif; font-size:18px; font-weight:700; color:#fff; margin-bottom:14px; display:flex; align-items:center; gap:10px; }
+      .routine-page .extra-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:10px 24px; }
+      .routine-page .extra-item { font-size:13px; color:var(--t2); line-height:1.6; display:flex; gap:8px; }
+      .routine-page .extra-item::before { content:'✓'; color:var(--sage); flex-shrink:0; font-weight:700; }
+      .routine-page .extra-list li { font-size:13px; color:var(--t2); line-height:1.6; padding:4px 0 4px 14px; position:relative; }
+      .routine-page .extra-list li::before { content:'•'; color:var(--mu); position:absolute; left:0; }
+
+      /* ── footer (aligned to main column) ── */
+      .dr-footer {
+        padding:28px 48px; border-top:1px solid var(--b2); background:var(--bg);
+        font-family:'DM Mono', monospace; font-size:10px; letter-spacing:.1em;
+        color:var(--mu); display:flex; justify-content:space-between;
+        max-width:1120px; margin-left:260px;
+      }
+
+      /* ── keyframes ── */
+      @keyframes drPulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.5;transform:scale(1.3);} }
+      @keyframes drFadeUp { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+
+      /* ── responsive ── */
+      @media (max-width: 800px) {
+        .routine-page { grid-template-columns:1fr; }
+        .routine-page .sidebar { position:static; height:auto; border-right:none; border-bottom:1px solid var(--b2); }
+        .routine-page .sb-nav { max-height:180px; }
+        .routine-page .main-content { padding:32px 20px 60px; }
+        .routine-page .wt-grid { grid-template-columns:repeat(2,1fr); }
+        .routine-page .extra-grid { grid-template-columns:1fr; }
+        .dr-footer { margin-left:0; padding:28px 20px; flex-direction:column; gap:8px; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .routine-page .cur-dot, .routine-page .act-dot, .routine-page .pb-fill, .routine-page .activity {
+          animation:none !important; transition:none !important;
         }
       }
     </style>
 
-    <script>
-      // Update current IST time
-      function updateISTTime() {
+    <div class="routine-page">
+      <!-- ═══════ SIDEBAR ═══════ -->
+      <aside class="sidebar">
+        <div class="sb-top">
+          <div class="eyebrow">Daily Schedule</div>
+          <h1 class="sb-h1">Daily<br /><em>Routine</em></h1>
+          <p class="sb-meta">Friendly Longevity · IST · Wake: 8:30 AM</p>
+
+          <div class="clock-box">
+            <div class="clock-label">Current IST</div>
+            <div class="clock-time" id="clockTime">--:--:--</div>
+            <div class="clock-date" id="clockDate"></div>
+          </div>
+
+          <div class="progress-box">
+            <div class="pb-top">
+              <span class="pb-label">Day Progress</span>
+              <span class="pb-pct" id="dayPct">0%</span>
+            </div>
+            <div class="pb-track"><div class="pb-fill" id="dayFill" style="width:0%"></div></div>
+            <div class="pb-sub" id="dayRem">calculating…</div>
+          </div>
+
+          <div class="current-box" id="currentBox">
+            <div class="cur-label">
+              <div class="cur-dot"></div>
+              <span id="curLabel">Now Active</span>
+            </div>
+            <div class="cur-name" id="curName">—</div>
+            <div class="cur-time" id="curTime">—</div>
+          </div>
+        </div>
+
+        <nav class="sb-nav">
+          <div class="nav-section-label">Jump to</div>
+          {PERIOD_ORDER.map((period) => {
+            const meta = periodMeta[period];
+            const count = groupedRoutine[period]?.length || 0;
+            return (
+              <a class="nav-link" href={`#${meta.label}`} style={`--section-c:${meta.color}`}>
+                <div class="nl-dot"></div>
+                <span class="nl-label">{period}</span>
+                <span class="nl-count">{count}</span>
+              </a>
+            );
+          })}
+          <div class="nav-section-label" style="margin-top:12px;">Quick Stats</div>
+          <div class="quick-stats">
+            ⏰ Wake: 8:30 AM<br />
+            😴 Sleep: 10:30 PM<br />
+            🕐 Active: 14 hrs<br />
+            💪 Exercise: 45 min<br />
+            📚 Deep work: 3 hrs
+          </div>
+        </nav>
+      </aside>
+
+      <!-- ═══════ MAIN ═══════ -->
+      <main class="main-content">
+
+        <!-- Weekly Targets -->
+        <div class="wt-section">
+          <div class="sec-head">
+            <span class="sh-icon">📊</span>
+            <span class="sh-title">Weekly Targets</span>
+            <div class="sh-line"></div>
+          </div>
+          <div class="wt-grid">
+            {Object.entries(weeklyTargets).map(([key, value]) => {
+              const { main, sub } = parseTarget(String(value));
+              return (
+                <div class="wt-card" style={`--wc:${targetColors[key] || '#e0aa40'}`}>
+                  <div class="wt-label">{formatKey(key)}</div>
+                  <div class="wt-val">
+                    {main}
+                    {sub && <><br /><span class="wt-val-sub">({sub})</span></>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <!-- Time blocks -->
+        {PERIOD_ORDER.map((period, bi) => {
+          const meta = periodMeta[period];
+          const items = groupedRoutine[period] || [];
+          if (items.length === 0) return null;
+          return (
+            <div class="time-block" id={meta.label} style={`--block-c:${meta.color}`}>
+              <div class="tb-head">
+                <span class="tb-icon">{meta.icon}</span>
+                <span class="tb-label">{period}</span>
+                <span class="tb-time-range">{items[0].time} — {items[items.length - 1].time}</span>
+                <span class="tb-count">{items.length} activities</span>
+              </div>
+
+              {items.map((item, ai) => (
+                <div
+                  class="activity"
+                  style={`animation-delay:${bi * 0.08 + ai * 0.06}s`}
+                  data-time={item.time}
+                  data-period={meta.label}
+                >
+                  <div class="act-time-col">
+                    <div class="act-dot"></div>
+                    <div class="act-line"></div>
+                  </div>
+                  <div class="act-card">
+                    <span class="now-badge">● NOW</span>
+                    <div class="act-top">
+                      <span class="act-icon">{item.icon}</span>
+                      <span class="act-meta-time">{item.time}</span>
+                      <span class={`prio p-${item.priority}`}>{item.priority.toUpperCase()}</span>
+                      <div class="act-chips">
+                        {item.details?.cost && <span class="chip">💰 {item.details.cost}</span>}
+                        {item.details?.duration && <span class="chip">⏱ {item.details.duration}</span>}
+                      </div>
+                    </div>
+                    <div class="act-name">{item.title}</div>
+                    <div class="act-desc">{item.description}</div>
+                    {item.details?.tip && <div class="act-tip">{item.details.tip}</div>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          );
+        })}
+
+        <!-- Budget Health Hacks -->
+        <div class="extra-section">
+          <h3 class="extra-title"><span>💰</span> Budget Health Hacks</h3>
+          <div class="extra-grid">
+            {budgetHealthHacks.map((hack) => <div class="extra-item">{hack}</div>)}
+          </div>
+        </div>
+
+        <!-- Pro Tips -->
+        <div class="extra-section">
+          <h3 class="extra-title"><span>💡</span> Pro Tips</h3>
+          <ul class="extra-list">
+            {routineTips.map((tip) => <li>{tip}</li>)}
+          </ul>
+        </div>
+
+      </main>
+    </div>
+
+    <footer class="dr-footer">
+      <span>← back to home</span>
+      <span>~/daily-routine · friendly longevity · IST</span>
+    </footer>
+
+    <script is:inline>
+      // ── IST clock (12-hour format) ──
+      function getIST() {
         const now = new Date();
-        const istOffset = 5.5 * 60 * 60 * 1000;
-        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-        const istTime = new Date(utc + istOffset);
-        
-        const hours = istTime.getHours().toString().padStart(2, '0');
-        const minutes = istTime.getMinutes().toString().padStart(2, '0');
-        const timeElement = document.getElementById('current-time');
-        
-        if (timeElement) {
-          timeElement.textContent = `${hours}:${minutes}`;
-        }
+        const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+        return new Date(utc + 5.5 * 3600000);
+      }
+      const pad = (n) => String(n).padStart(2, '0');
 
-        updateProgress(istTime);
+      function format12Hour(h, m, s) {
+        const period = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 === 0 ? 12 : h % 12;
+        return `${pad(h12)}:${pad(m)}:${pad(s)} ${period}`;
       }
 
-      function updateProgress(istTime) {
-        const currentHour = istTime.getHours();
-        const currentMinute = istTime.getMinutes();
-        const totalMinutes = currentHour * 60 + currentMinute;
-        
-        const routineStart = 510;
-        const routineEnd = 1830;
-        const routineDuration = routineEnd - routineStart;
-        
-        let progress = 0;
-        if (totalMinutes >= routineStart) {
-          progress = Math.min(((totalMinutes - routineStart) / routineDuration) * 100, 100);
+      // "08:30 AM" / "10:45 PM" → minutes since midnight
+      function timeStrToMin(ts) {
+        const match = String(ts).match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+        if (!match) return 0;
+        let h = parseInt(match[1], 10);
+        const m = parseInt(match[2], 10);
+        const period = match[3].toUpperCase();
+        if (period === 'PM' && h !== 12) h += 12;
+        if (period === 'AM' && h === 12) h = 0;
+        return h * 60 + m;
+      }
+
+      // Build flat activity list from DOM
+      const activities = [];
+      document.querySelectorAll('.routine-page .activity').forEach((el) => {
+        const time = el.getAttribute('data-time');
+        const period = el.getAttribute('data-period');
+        const card = el.querySelector('.act-card');
+        const name = el.querySelector('.act-name')?.textContent || '';
+        if (time && card) activities.push({ time, minutes: timeStrToMin(time), period, name, card });
+      });
+
+      const WAKE_MIN = 8 * 60 + 30;    // 8:30 AM
+      const SLEEP_MIN = 22 * 60 + 30;  // 10:30 PM
+      const TOTAL_MIN = SLEEP_MIN - WAKE_MIN;
+
+      function update() {
+        const ist = getIST();
+        const h = ist.getHours(), m = ist.getMinutes(), s = ist.getSeconds();
+
+        const clockEl = document.getElementById('clockTime');
+        if (clockEl) clockEl.textContent = format12Hour(h, m, s);
+
+        const dateEl = document.getElementById('clockDate');
+        if (dateEl) {
+          const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+          const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+          dateEl.textContent = `${days[ist.getDay()]} · ${ist.getDate()} ${months[ist.getMonth()]} ${ist.getFullYear()}`;
         }
-        
-        const progressBar = document.getElementById('progress-bar');
-        const progressText = document.getElementById('progress-text');
-        
-        if (progressBar) {
-          progressBar.style.width = `${progress.toFixed(1)}%`;
+
+        // Day progress
+        const nowMin = h * 60 + m + s / 60;
+        let pct = 0, remText = '';
+        if (nowMin < WAKE_MIN) { pct = 0; remText = 'Day starts at 8:30 AM IST'; }
+        else if (nowMin >= SLEEP_MIN) { pct = 100; remText = 'Day complete — get some rest 🌙'; }
+        else {
+          pct = ((nowMin - WAKE_MIN) / TOTAL_MIN) * 100;
+          const rem = Math.round(SLEEP_MIN - nowMin);
+          remText = `${Math.floor(rem / 60)}h ${rem % 60}m remaining in active day`;
         }
-        if (progressText) {
-          progressText.textContent = `${progress.toFixed(0)}%`;
+        const pctEl = document.getElementById('dayPct');
+        const fillEl = document.getElementById('dayFill');
+        const remEl = document.getElementById('dayRem');
+        if (pctEl) pctEl.textContent = Math.round(pct) + '%';
+        if (fillEl) fillEl.style.width = Math.round(pct) + '%';
+        if (remEl) remEl.textContent = remText;
+
+        // Current activity highlight
+        document.querySelectorAll('.routine-page .act-card').forEach((c) => c.classList.remove('now-active'));
+        const box = document.getElementById('currentBox');
+        const curLabel = document.getElementById('curLabel');
+        const curName = document.getElementById('curName');
+        const curTime = document.getElementById('curTime');
+
+        let current = null;
+        for (let i = 0; i < activities.length; i++) {
+          const start = activities[i].minutes;
+          const nextStart = i < activities.length - 1 ? activities[i + 1].minutes : start + 60;
+          if (nowMin >= start && nowMin < nextStart) { current = { ...activities[i], idx: i }; break; }
+        }
+
+        if (current) {
+          current.card.classList.add('now-active');
+          if (box) box.classList.remove('idle');
+          if (curLabel) curLabel.textContent = 'Now Active';
+          if (curName) curName.textContent = current.name;
+          const next = activities[current.idx + 1];
+          if (curTime) curTime.textContent = `${current.time} — ${next ? next.time : '10:30 PM'} · ${current.period}`;
+        } else {
+          if (box) box.classList.add('idle');
+          if (curLabel) curLabel.textContent = 'Off Hours';
+          if (curName) curName.textContent = 'Outside scheduled hours';
+          if (curTime) curTime.textContent = 'Schedule: 8:30 AM – 10:30 PM';
         }
       }
 
-      updateISTTime();
-      setInterval(updateISTTime, 60000);
+      // Scroll spy (center-band = stable, no flicker)
+      function setupScrollSpy() {
+        const ids = ['morning','midday','afternoon','evening','night'];
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((en) => {
+            if (en.isIntersecting) {
+              document.querySelectorAll('.routine-page .nav-link').forEach((l) => l.classList.remove('active-sec'));
+              const link = document.querySelector(`.routine-page .nav-link[href="#${en.target.id}"]`);
+              if (link) link.classList.add('active-sec');
+            }
+          });
+        }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+        ids.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) observer.observe(el);
+        });
+      }
+
+      // Smooth scroll for sidebar links
+      document.querySelectorAll('.routine-page .nav-link').forEach((link) => {
+        link.addEventListener('click', (e) => {
+          const href = link.getAttribute('href');
+          if (href && href.startsWith('#')) {
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+
+      update();
+      setInterval(update, 1000);
+      setTimeout(setupScrollSpy, 300);
     </script>
   </>
 </BaseLayout>

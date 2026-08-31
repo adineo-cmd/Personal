@@ -1,0 +1,397 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageNav from '../components/PageNavigation.astro';
+import { anteriorMuscles, posteriorMuscles } from '../data/anatomy.js';
+---
+<BaseLayout title="Muscle Anatomy Reference | Aditya Yadav" description="Interactive anatomy">
+  <>
+    <PageNav currentPage="anatomy" />
+
+    <div class="min-h-screen bg-[#08080a] py-8 px-4 sm:px-6">
+      <div class="max-w-6xl mx-auto" style="font-family: 'Courier New', Courier, monospace;">
+        
+        {/* Header */}
+        <div class="mb-6">
+          <h1 class="text-3xl sm:text-4xl font-serif mb-2 text-[#ddd6cc]">
+            <span class="text-white">Muscle</span><span class="text-[#e0aa40] italic"> Anatomy</span><span class="text-[#ddd6cc]"> Reference</span>
+          </h1>
+          <p class="text-[#6a6260] text-sm">Detailed muscle functions, exercises, and injury prevention</p>
+        </div>
+
+        {/* Toggle Buttons - Always Visible */}
+        <div class="flex gap-2 mb-6 sticky top-4 z-50 bg-[#08080a] pb-2">
+          <button 
+            id="btn-anterior"
+            class="flex-1 px-4 py-3 rounded-lg text-sm font-medium bg-[#5a9870] text-white transition-all"
+          >
+            Anterior (Front)
+          </button>
+          <button 
+            id="btn-posterior"
+            class="flex-1 px-4 py-3 rounded-lg text-sm font-medium bg-[#1e1e22] text-[#6a6260] hover:bg-[#2a2a2e] transition-all"
+          >
+            Posterior (Back)
+          </button>
+        </div>
+
+        {/* Mobile Layout: Image on top, list below */}
+        <div class="lg:hidden space-y-6">
+          {/* Mobile Image Container */}
+          <div class="bg-[#0e0e10]/50 border border-[#2a2a2e] rounded-xl p-3">
+            <div class="relative w-full h-[400px] overflow-hidden rounded-lg">
+              <img 
+                id="mobile-img-anterior"
+                src="/images/anatomy-anterior.jpg" 
+                alt="Anterior view"
+                class="absolute inset-0 w-full h-full object-contain transition-opacity duration-300"
+              />
+              <img 
+                id="mobile-img-posterior"
+                src="/images/anatomy-posterior.jpg" 
+                alt="Posterior view"
+                class="absolute inset-0 w-full h-full object-contain transition-opacity duration-300 hidden"
+              />
+            </div>
+            <div class="text-center text-[10px] text-[#6a6260] mt-2">
+              <span id="mobile-label">Anterior View (Front)</span>
+            </div>
+          </div>
+
+          {/* Mobile Muscle List */}
+          <div>
+            <div class="flex items-center justify-between mb-4 pb-2 border-b border-[#2a2a2e]">
+              <h2 class="text-lg font-medium text-[#ddd6cc]">Muscle Details</h2>
+              <span 
+                id="mobile-count" 
+                class="text-xs text-[#6a6260] bg-[#0e0e10] px-2 py-1 rounded"
+                data-anterior-count={anteriorMuscles.length}
+                data-posterior-count={posteriorMuscles.length}
+              >
+                {anteriorMuscles.length} muscles
+              </span>
+            </div>
+            
+            <div id="mobile-list-anterior" class="space-y-3">
+              {anteriorMuscles.map(muscle => (
+                <details class="group border border-[#2a2a2e] rounded-xl bg-[#0e0e10]/20 overflow-hidden">
+                  <summary class="flex items-center justify-between p-4 cursor-pointer hover:bg-[#121214] select-none list-none">
+                    <div class="flex items-center gap-3">
+                      <span class="w-2 h-2 rounded-full bg-[#5a9870]"></span>
+                      <span class="text-sm font-medium text-[#ddd6cc]">{muscle.name}</span>
+                    </div>
+                    <svg class="w-5 h-5 text-[#6a6260] group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </summary>
+                  <div class="p-4 pt-0 border-t border-[#2a2a2e]/50">
+                    <div class="space-y-4 mt-4">
+                      <div>
+                        <h4 class="text-xs font-bold text-[#a89e92] uppercase mb-2">Function</h4>
+                        <p class="text-sm text-[#ddd6cc]">{muscle.function}</p>
+                      </div>
+                      <div>
+                        <h4 class="text-xs font-bold text-[#5a9870] uppercase mb-2">Exercises</h4>
+                        <ul class="space-y-1">
+                          {muscle.exercises.map(ex => (
+                            <li class="text-sm text-[#ddd6cc] flex items-start gap-2">
+                              <span class="w-1 h-1 rounded-full bg-[#5a9870] mt-1.5 flex-shrink-0"></span>{ex}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 class="text-xs font-bold text-[#d86848] uppercase mb-2">Injuries</h4>
+                        <ul class="space-y-1">
+                          {muscle.injuries.map(injury => (
+                            <li class="text-sm text-[#ddd6cc] flex items-start gap-2">
+                              <span class="w-1 h-1 rounded-full bg-[#d86848] mt-1.5 flex-shrink-0"></span>{injury}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 class="text-xs font-bold text-[#e0aa40] uppercase mb-2">Pro Tip</h4>
+                        <p class="text-sm text-[#ddd6cc] italic bg-[#0e0e10]/50 p-3 rounded border border-[#2a2a2e]/50">"{muscle.notes}"</p>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              ))}
+            </div>
+
+            <div id="mobile-list-posterior" class="space-y-3 hidden">
+              {posteriorMuscles.map(muscle => (
+                <details class="group border border-[#2a2a2e] rounded-xl bg-[#0e0e10]/20 overflow-hidden">
+                  <summary class="flex items-center justify-between p-4 cursor-pointer hover:bg-[#121214] select-none list-none">
+                    <div class="flex items-center gap-3">
+                      <span class="w-2 h-2 rounded-full bg-[#5a80a8]"></span>
+                      <span class="text-sm font-medium text-[#ddd6cc]">{muscle.name}</span>
+                    </div>
+                    <svg class="w-5 h-5 text-[#6a6260] group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                  </summary>
+                  <div class="p-4 pt-0 border-t border-[#2a2a2e]/50">
+                    <div class="space-y-4 mt-4">
+                      <div>
+                        <h4 class="text-xs font-bold text-[#a89e92] uppercase mb-2">Function</h4>
+                        <p class="text-sm text-[#ddd6cc]">{muscle.function}</p>
+                      </div>
+                      <div>
+                        <h4 class="text-xs font-bold text-[#5a9870] uppercase mb-2">Exercises</h4>
+                        <ul class="space-y-1">
+                          {muscle.exercises.map(ex => (
+                            <li class="text-sm text-[#ddd6cc] flex items-start gap-2">
+                              <span class="w-1 h-1 rounded-full bg-[#5a9870] mt-1.5 flex-shrink-0"></span>{ex}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 class="text-xs font-bold text-[#d86848] uppercase mb-2">Injuries</h4>
+                        <ul class="space-y-1">
+                          {muscle.injuries.map(injury => (
+                            <li class="text-sm text-[#ddd6cc] flex items-start gap-2">
+                              <span class="w-1 h-1 rounded-full bg-[#d86848] mt-1.5 flex-shrink-0"></span>{injury}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 class="text-xs font-bold text-[#e0aa40] uppercase mb-2">Pro Tip</h4>
+                        <p class="text-sm text-[#ddd6cc] italic bg-[#0e0e10]/50 p-3 rounded border border-[#2a2a2e]/50">"{muscle.notes}"</p>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop Layout: Side by side */}
+        <div class="hidden lg:grid lg:grid-cols-[400px_1fr] gap-8 items-start">
+          {/* Left: Sticky Image */}
+          <div class="sticky top-24">
+            <div class="bg-[#0e0e10]/50 border border-[#2a2a2e] rounded-xl p-3">
+              <div class="relative w-full h-[700px] overflow-hidden rounded-lg">
+                <img 
+                  id="desktop-img-anterior"
+                  src="/images/anatomy-anterior.jpg" 
+                  alt="Anterior view"
+                  class="absolute inset-0 w-full h-full object-contain transition-opacity duration-300"
+                />
+                <img 
+                  id="desktop-img-posterior"
+                  src="/images/anatomy-posterior.jpg" 
+                  alt="Posterior view"
+                  class="absolute inset-0 w-full h-full object-contain transition-opacity duration-300 hidden"
+                />
+              </div>
+              <div class="text-center text-[10px] text-[#6a6260] mt-2">
+                <span id="desktop-label">Anterior View (Front)</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Scrollable List */}
+          <div>
+            <div class="flex items-center justify-between mb-4 pb-2 border-b border-[#2a2a2e] sticky top-24 bg-[#08080a] z-10">
+              <h2 class="text-lg font-medium text-[#ddd6cc]">Muscle Details</h2>
+              <span 
+                id="desktop-count" 
+                class="text-xs text-[#6a6260] bg-[#0e0e10] px-2 py-1 rounded"
+                data-anterior-count={anteriorMuscles.length}
+                data-posterior-count={posteriorMuscles.length}
+              >
+                {anteriorMuscles.length} muscles
+              </span>
+            </div>
+            
+            <div id="desktop-list-anterior" class="space-y-3">
+              {anteriorMuscles.map(muscle => (
+                <details class="group border border-[#2a2a2e] rounded-xl bg-[#0e0e10]/20 overflow-hidden">
+                  <summary class="flex items-center justify-between p-4 cursor-pointer hover:bg-[#121214] select-none list-none">
+                    <div class="flex items-center gap-3">
+                      <span class="w-2 h-2 rounded-full bg-[#5a9870]"></span>
+                      <span class="text-base font-medium text-[#ddd6cc]">{muscle.name}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <span class="text-xs text-[#6a6260] bg-[#0e0e10] px-2 py-1 rounded border border-[#2a2a2e]">{muscle.side}</span>
+                      <svg class="w-5 h-5 text-[#6a6260] group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                      </svg>
+                    </div>
+                  </summary>
+                  <div class="p-4 pt-0 border-t border-[#2a2a2e]/50">
+                    <div class="grid grid-cols-2 gap-6 mt-4">
+                      <div class="col-span-2">
+                        <h4 class="text-xs font-bold text-[#a89e92] uppercase mb-2">Function</h4>
+                        <p class="text-sm text-[#ddd6cc]">{muscle.function}</p>
+                      </div>
+                      <div>
+                        <h4 class="text-xs font-bold text-[#5a9870] uppercase mb-2">Exercises</h4>
+                        <ul class="space-y-1">
+                          {muscle.exercises.map(ex => (
+                            <li class="text-sm text-[#ddd6cc] flex items-start gap-2">
+                              <span class="w-1 h-1 rounded-full bg-[#5a9870] mt-1.5 flex-shrink-0"></span>{ex}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 class="text-xs font-bold text-[#d86848] uppercase mb-2">Injuries</h4>
+                        <ul class="space-y-1">
+                          {muscle.injuries.map(injury => (
+                            <li class="text-sm text-[#ddd6cc] flex items-start gap-2">
+                              <span class="w-1 h-1 rounded-full bg-[#d86848] mt-1.5 flex-shrink-0"></span>{injury}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div class="col-span-2">
+                        <h4 class="text-xs font-bold text-[#e0aa40] uppercase mb-2">Pro Tip</h4>
+                        <p class="text-sm text-[#ddd6cc] italic bg-[#0e0e10]/50 p-3 rounded border border-[#2a2a2e]/50">"{muscle.notes}"</p>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              ))}
+            </div>
+
+            <div id="desktop-list-posterior" class="space-y-3 hidden">
+              {posteriorMuscles.map(muscle => (
+                <details class="group border border-[#2a2a2e] rounded-xl bg-[#0e0e10]/20 overflow-hidden">
+                  <summary class="flex items-center justify-between p-4 cursor-pointer hover:bg-[#121214] select-none list-none">
+                    <div class="flex items-center gap-3">
+                      <span class="w-2 h-2 rounded-full bg-[#5a80a8]"></span>
+                      <span class="text-base font-medium text-[#ddd6cc]">{muscle.name}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                      <span class="text-xs text-[#6a6260] bg-[#0e0e10] px-2 py-1 rounded border border-[#2a2a2e]">{muscle.side}</span>
+                      <svg class="w-5 h-5 text-[#6a6260] group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                      </svg>
+                    </div>
+                  </summary>
+                  <div class="p-4 pt-0 border-t border-[#2a2a2e]/50">
+                    <div class="grid grid-cols-2 gap-6 mt-4">
+                      <div class="col-span-2">
+                        <h4 class="text-xs font-bold text-[#a89e92] uppercase mb-2">Function</h4>
+                        <p class="text-sm text-[#ddd6cc]">{muscle.function}</p>
+                      </div>
+                      <div>
+                        <h4 class="text-xs font-bold text-[#5a9870] uppercase mb-2">Exercises</h4>
+                        <ul class="space-y-1">
+                          {muscle.exercises.map(ex => (
+                            <li class="text-sm text-[#ddd6cc] flex items-start gap-2">
+                              <span class="w-1 h-1 rounded-full bg-[#5a9870] mt-1.5 flex-shrink-0"></span>{ex}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <h4 class="text-xs font-bold text-[#d86848] uppercase mb-2">Injuries</h4>
+                        <ul class="space-y-1">
+                          {muscle.injuries.map(injury => (
+                            <li class="text-sm text-[#ddd6cc] flex items-start gap-2">
+                              <span class="w-1 h-1 rounded-full bg-[#d86848] mt-1.5 flex-shrink-0"></span>{injury}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div class="col-span-2">
+                        <h4 class="text-xs font-bold text-[#e0aa40] uppercase mb-2">Pro Tip</h4>
+                        <p class="text-sm text-[#ddd6cc] italic bg-[#0e0e10]/50 p-3 rounded border border-[#2a2a2e]/50">"{muscle.notes}"</p>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              ))}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', () => {
+        const btnAnterior = document.getElementById('btn-anterior');
+        const btnPosterior = document.getElementById('btn-posterior');
+        
+        // Mobile elements
+        const mobileImgAnterior = document.getElementById('mobile-img-anterior');
+        const mobileImgPosterior = document.getElementById('mobile-img-posterior');
+        const mobileListAnterior = document.getElementById('mobile-list-anterior');
+        const mobileListPosterior = document.getElementById('mobile-list-posterior');
+        const mobileLabel = document.getElementById('mobile-label');
+        const mobileCount = document.getElementById('mobile-count');
+        
+        // Desktop elements
+        const desktopImgAnterior = document.getElementById('desktop-img-anterior');
+        const desktopImgPosterior = document.getElementById('desktop-img-posterior');
+        const desktopListAnterior = document.getElementById('desktop-list-anterior');
+        const desktopListPosterior = document.getElementById('desktop-list-posterior');
+        const desktopLabel = document.getElementById('desktop-label');
+        const desktopCount = document.getElementById('desktop-count');
+        
+        // ✅ Get counts from data attributes (Astro renders these as strings)
+        const countEl = mobileCount || desktopCount;
+        const anteriorCount = countEl?.dataset.anteriorCount || '0';
+        const posteriorCount = countEl?.dataset.posteriorCount || '0';
+        
+        function showAnterior() {
+          // Update Mobile
+          if (mobileImgAnterior) mobileImgAnterior.classList.remove('hidden');
+          if (mobileImgPosterior) mobileImgPosterior.classList.add('hidden');
+          if (mobileListAnterior) mobileListAnterior.classList.remove('hidden');
+          if (mobileListPosterior) mobileListPosterior.classList.add('hidden');
+          if (mobileLabel) mobileLabel.textContent = 'Anterior View (Front)';
+          if (mobileCount) mobileCount.textContent = `${anteriorCount} muscles`;
+          
+          // Update Desktop
+          if (desktopImgAnterior) desktopImgAnterior.classList.remove('hidden');
+          if (desktopImgPosterior) desktopImgPosterior.classList.add('hidden');
+          if (desktopListAnterior) desktopListAnterior.classList.remove('hidden');
+          if (desktopListPosterior) desktopListPosterior.classList.add('hidden');
+          if (desktopLabel) desktopLabel.textContent = 'Anterior View (Front)';
+          if (desktopCount) desktopCount.textContent = `${anteriorCount} muscles`;
+          
+          // Update Buttons
+          btnAnterior.style.backgroundColor = '#5a9870';
+          btnAnterior.style.color = 'white';
+          btnPosterior.style.backgroundColor = '#1e1e22';
+          btnPosterior.style.color = '#6a6260';
+        }
+        
+        function showPosterior() {
+          // Update Mobile
+          if (mobileImgAnterior) mobileImgAnterior.classList.add('hidden');
+          if (mobileImgPosterior) mobileImgPosterior.classList.remove('hidden');
+          if (mobileListAnterior) mobileListAnterior.classList.add('hidden');
+          if (mobileListPosterior) mobileListPosterior.classList.remove('hidden');
+          if (mobileLabel) mobileLabel.textContent = 'Posterior View (Back)';
+          if (mobileCount) mobileCount.textContent = `${posteriorCount} muscles`;
+          
+          // Update Desktop
+          if (desktopImgAnterior) desktopImgAnterior.classList.add('hidden');
+          if (desktopImgPosterior) desktopImgPosterior.classList.remove('hidden');
+          if (desktopListAnterior) desktopListAnterior.classList.add('hidden');
+          if (desktopListPosterior) desktopListPosterior.classList.remove('hidden');
+          if (desktopLabel) desktopLabel.textContent = 'Posterior View (Back)';
+          if (desktopCount) desktopCount.textContent = `${posteriorCount} muscles`;
+          
+          // Update Buttons
+          btnPosterior.style.backgroundColor = '#5a9870';
+          btnPosterior.style.color = 'white';
+          btnAnterior.style.backgroundColor = '#1e1e22';
+          btnAnterior.style.color = '#6a6260';
+        }
+        
+        btnAnterior.addEventListener('click', showAnterior);
+        btnPosterior.addEventListener('click', showPosterior);
+      });
+    </script>
+  </>
+</BaseLayout>

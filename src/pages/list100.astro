@@ -3,172 +3,320 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageNav from '../components/PageNavigation.astro';
 import { goals, habits } from '../data/content.js';
 
-// Goals progress
-const goalsCompleted = goals.filter(g => g.completed).length;
-const totalGoals = goals.length;
-const goalsPercentage = totalGoals > 0 
-  ? Math.round((goalsCompleted / totalGoals) * 100) 
+// Pre-calculate initial stats for server-side render
+const stats = {
+  goalsCompleted: goals.filter(g => g.completed).length,
+  goalsTotal: goals.length,
+  habitsCompleted: habits.filter(h => h.completed).length,
+  habitsTotal: habits.length
+};
+stats.percentage = stats.goalsTotal > 0 
+  ? Math.round((stats.goalsCompleted / stats.goalsTotal) * 100) 
   : 0;
 
-// Habits progress
-const habitsCompleted = habits.filter(h => h.completed).length;
-const totalHabits = habits.length;
-const habitsPercentage = totalHabits > 0 
-  ? Math.round((habitsCompleted / totalHabits) * 100) 
-  : 0;
+// Prepare inspirations data
+const inspirations = [
+  "Make a classic French croissant from scratch",
+  "Watch the sunrise from a mountain peak",
+  "Write a letter to your future self",
+  "Learn to cook a dish from a culture you've never visited",
+  "Stargaze in a dark sky reserve",
+  "Take a spontaneous day trip somewhere new",
+  "Master the art of sourdough bread",
+  "Swim in bioluminescent waters",
+  "Learn to identify 10 constellations",
+  "Create a time capsule to open in 10 years",
+];
 ---
 
 <BaseLayout title="List 100 | Aditya Yadav" description="My life goals and daily habits">
   <>
     <PageNav currentPage="list 100" />
 
-    <div class="min-h-screen bg-[#0f0f0f]">
-      <div 
-        class="text-zinc-400 py-16 px-6"
-        style="font-family: 'Courier New', Courier, monospace;"
-      >
-        <div class="max-w-5xl mx-auto">
-          <h1 class="text-5xl font-serif mb-6 text-zinc-200">List 100</h1>
+    <div class="min-h-screen bg-[#08080a] text-[#ddd6cc]">
+      <div class="py-8 md:py-12 px-4 md:px-6">
+        <div class="max-w-6xl mx-auto">
           
-          <p class="text-xs text-zinc-500 mb-2">Created on: April 30, 2024</p>
-          
-          <p class="text-zinc-400 text-sm mb-12 leading-relaxed">
-            Note: I have intentionally decided to never add/remove any items from the "Things I Want to Do" list. 
-            It captures a moment in time when I was 22 years old. The Habits section is dynamic and evolves with my journey.
-          </p>
-
-          {/* ===== SECTION 1: THINGS I WANT TO DO / HOBBIES ===== */}
-          <section class="mb-16 pb-12 border-b border-zinc-800/70">
-            <div class="flex items-center justify-between mb-6">
-              <h2 class="text-2xl font-serif text-zinc-200">Things I Want to Do / Hobbies</h2>
-              <span class="text-xs bg-zinc-800/50 text-zinc-500 px-3 py-1 rounded-full">
-                Fixed List • Created April 2024
-              </span>
+          <header class="mb-8 md:mb-12">
+            <div class="flex items-center gap-3 md:gap-4 mb-6">
+              <span class="text-[10px] md:text-xs tracking-[0.3em] text-[#a89e92] uppercase">A Life Well Lived</span>
+              <div class="h-px bg-gradient-to-r from-[#e0aa40]/50 to-transparent flex-1"></div>
             </div>
             
-            <div class="mb-8">
-              <div class="flex items-center gap-3 mb-3">
-                <span class="text-sm font-mono text-zinc-300">
-                  Completed {goalsCompleted} of {totalGoals} ({goalsPercentage}%)
-                </span>
-              </div>
-              <div class="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
-                <div 
-                  class="h-full bg-zinc-600 transition-all duration-500"
-                  style={`width: ${goalsPercentage}%`}
-                />
-              </div>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-4">
-              {goals.map((goal) => (
-                <div 
-                  class="flex items-start gap-3 p-4 bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-lg hover:border-zinc-700 transition-colors"
-                >
-                  <div 
-                    class={`mt-1 w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                      goal.completed 
-                        ? 'border-zinc-500 bg-zinc-500' 
-                        : 'border-zinc-700'
-                    }`}
-                  >
-                    {goal.completed && (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-zinc-950">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    )}
-                  </div>
-                  <span class={`text-sm leading-relaxed ${
-                    goal.completed 
-                      ? 'text-zinc-600 line-through opacity-70' 
-                      : 'text-zinc-300'
-                  }`}>
-                    {goal.text}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* ===== SECTION 2: HABITS ===== */}
-          <section class="mb-16">
-            <div class="flex items-center justify-between mb-6">
-              <h2 class="text-2xl font-serif text-zinc-200">Habits</h2>
-              <span class="text-xs bg-zinc-800/50 text-zinc-500 px-3 py-1 rounded-full">
-                Dynamic List • Updated Regularly
-              </span>
-            </div>
+            <h1 class="text-5xl md:text-7xl font-serif mb-4">
+              <span class="text-white font-bold">100</span>
+              <span class="text-[#e0aa40] italic font-light ml-2 md:ml-4">Things</span>
+            </h1>
             
-            <p class="text-sm text-zinc-500 mb-6 pl-1">
-              These are practices I'm cultivating for sustainable growth. Completion indicates the habit is consistently integrated into my life.
+            <p class="text-[#a89e92] text-sm md:text-base max-w-2xl mb-6 md:mb-8 leading-relaxed">
+              A living document — a testament to curiosity, courage, and the beautiful hunger for more. 
+              Check items off as you live them.
             </p>
 
-            <div class="mb-8">
-              <div class="flex items-center gap-3 mb-3">
-                <span class="text-sm font-mono text-zinc-300">
-                  Established {habitsCompleted} of {totalHabits} ({habitsPercentage}%)
-                </span>
-              </div>
-              <div class="w-full h-2 bg-zinc-800 rounded-full overflow-hidden">
-                <div 
-                  class="h-full bg-zinc-600 transition-all duration-500"
-                  style={`width: ${habitsPercentage}%`}
-                />
+            <!-- Progress Card -->
+            <div class="bg-[#0e0e10]/50 border border-[#2a2a2e] rounded-lg p-4 md:p-6 mb-6">
+              <div class="flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-8">
+                <div class="relative w-20 h-20 md:w-24 md:h-24 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-full h-full transform -rotate-90">
+                    <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="6" fill="transparent" class="text-[#2a2a2e]" />
+                    <circle id="progress-circle" cx="48" cy="48" r="40" stroke="currentColor" stroke-width="6" fill="transparent" stroke-dasharray={2 * Math.PI * 40} stroke-dashoffset={2 * Math.PI * 40 * (1 - stats.percentage / 100)} class="text-[#e0aa40] transition-all duration-500" stroke-linecap="round" />
+                  </svg>
+                  <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <span id="percentage-text" class="text-xl md:text-2xl font-bold text-[#e0aa40]">{stats.percentage}%</span>
+                    <span class="text-[8px] md:text-[10px] text-[#6a6260] uppercase tracking-wider">Done</span>
+                  </div>
+                </div>
+                <div class="flex-1 w-full">
+                  <div class="flex gap-4 md:gap-8 mb-3 md:mb-4">
+                    <div>
+                      <div id="completed-count" class="text-xl md:text-2xl font-serif text-[#5a9870]">{stats.goalsCompleted}</div>
+                      <div class="text-[9px] md:text-[10px] text-[#6a6260] uppercase tracking-wider">Completed</div>
+                    </div>
+                    <div>
+                      <div id="remaining-count" class="text-xl md:text-2xl font-serif text-[#d86848]">{stats.goalsTotal - stats.goalsCompleted}</div>
+                      <div class="text-[9px] md:text-[10px] text-[#6a6260] uppercase tracking-wider">Remaining</div>
+                    </div>
+                    <div>
+                      <div class="text-xl md:text-2xl font-serif text-[#ddd6cc]">{stats.goalsTotal}</div>
+                      <div class="text-[9px] md:text-[10px] text-[#6a6260] uppercase tracking-wider">Total</div>
+                    </div>
+                  </div>
+                  <div class="w-full h-px bg-[#2a2a2e] mb-2"></div>
+                  <div class="text-xs text-[#6a6260] font-mono">
+                    <span id="progress-text">{stats.goalsCompleted}</span> of {stats.goalsTotal} completed · Keep going
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-4">
-              {habits.map((habit) => (
-                <div 
-                  class="flex items-start gap-3 p-4 bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 rounded-lg hover:border-zinc-700 transition-colors"
-                >
-                  <div 
-                    class={`mt-1 w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                      habit.completed 
-                        ? 'border-zinc-500 bg-zinc-500' 
-                        : 'border-zinc-700'
-                    }`}
-                  >
-                    {habit.completed && (
-                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-zinc-950">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    )}
-                  </div>
-                  <span class={`text-sm leading-relaxed ${
-                    habit.completed 
-                      ? 'text-zinc-600 opacity-80' 
-                      : 'text-zinc-300'
-                  }`}>
-                    {habit.text}
-                  </span>
-                </div>
-              ))}
+            <!-- Inspire Me -->
+            <div class="flex flex-col sm:flex-row items-start gap-4 mb-6">
+              <button id="inspire-btn" type="button" class="border border-[#2a2a2e] bg-[#0e0e10]/30 text-[#a89e92] px-4 py-2 text-xs tracking-widest uppercase hover:border-[#e0aa40]/50 hover:text-[#e0aa40] transition-all cursor-pointer select-none">
+                 Inspire Me
+              </button>
+              <div id="inspiration-text" class="text-[#e0aa40]/90 italic text-sm md:text-base font-light opacity-0 transition-opacity duration-500 flex-1 min-h-[1.5rem]"></div>
             </div>
+
+            <!-- Category Filters -->
+            <div class="overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
+              <div class="flex gap-2 min-w-max" id="category-filters">
+                <button type="button" data-category="all" class="category-btn px-4 py-2 text-xs tracking-wider uppercase transition-all border bg-[#e0aa40] border-[#e0aa40] text-[#08080a] font-semibold cursor-pointer select-none">All</button>
+                <button type="button" data-category="travel" class="category-btn px-4 py-2 text-xs tracking-wider uppercase transition-all border bg-transparent border-[#2a2a2e] text-[#a89e92] hover:border-[#e0aa40]/50 hover:text-[#e0aa40] cursor-pointer select-none">✈ Travel</button>
+                <button type="button" data-category="adventure" class="category-btn px-4 py-2 text-xs tracking-wider uppercase transition-all border bg-transparent border-[#2a2a2e] text-[#a89e92] hover:border-[#e0aa40]/50 hover:text-[#e0aa40] cursor-pointer select-none">⛰ Adventure</button>
+                <button type="button" data-category="learning" class="category-btn px-4 py-2 text-xs tracking-wider uppercase transition-all border bg-transparent border-[#2a2a2e] text-[#a89e92] hover:border-[#e0aa40]/50 hover:text-[#e0aa40] cursor-pointer select-none"> Learning</button>
+                <button type="button" data-category="creative" class="category-btn px-4 py-2 text-xs tracking-wider uppercase transition-all border bg-transparent border-[#2a2a2e] text-[#a89e92] hover:border-[#e0aa40]/50 hover:text-[#e0aa40] cursor-pointer select-none">🎨 Creative</button>
+                <button type="button" data-category="food" class="category-btn px-4 py-2 text-xs tracking-wider uppercase transition-all border bg-transparent border-[#2a2a2e] text-[#a89e92] hover:border-[#e0aa40]/50 hover:text-[#e0aa40] cursor-pointer select-none"> Food</button>
+                <button type="button" data-category="people" class="category-btn px-4 py-2 text-xs tracking-wider uppercase transition-all border bg-transparent border-[#2a2a2e] text-[#a89e92] hover:border-[#e0aa40]/50 hover:text-[#e0aa40] cursor-pointer select-none">🤝 People</button>
+                <button type="button" data-category="mind" class="category-btn px-4 py-2 text-xs tracking-wider uppercase transition-all border bg-transparent border-[#2a2a2e] text-[#a89e92] hover:border-[#e0aa40]/50 hover:text-[#e0aa40] cursor-pointer select-none">🧠 Mind</button>
+              </div>
+            </div>
+          </header>
+
+          <!-- Dynamic Content Containers -->
+          <div id="goals-container" class="min-h-[200px]"></div>
+
+          <!-- Habits Section -->
+          <section class="mb-12 md:mb-16">
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-[#2a2a2e]">
+              <h2 class="text-xl md:text-2xl font-serif text-white flex items-center gap-3">
+                <span class="text-2xl">✨</span>
+                <span>Daily Habits</span>
+              </h2>
+              <span id="habits-counter" class="text-xs text-[#6a6260] font-mono">{stats.habitsCompleted}/{stats.habitsTotal}</span>
+            </div>
+            <div id="habits-container" class="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#2a2a2e]/50 border border-[#2a2a2e] rounded-lg overflow-hidden"></div>
           </section>
 
-          <div class="text-center py-8 text-zinc-700 text-sm border-t border-zinc-800/50">
-            <p>
-              "We are what we repeatedly do. Excellence, then, is not an act, but a habit." — Will Durant (paraphrasing Aristotle)
-            </p>
+          <div class="text-center py-6 md:py-8 border-t border-[#2a2a2e]">
+            <p class="text-[10px] md:text-xs text-[#6a6260] tracking-[0.2em] uppercase">✦ a life well lived · 100 things · living document</p>
           </div>
+
         </div>
       </div>
 
-      {/* Back Button */}
-      <div class="border-t border-zinc-800/50 py-6">
-        <div class="max-w-5xl mx-auto px-6">
-          <a
-            href="/"
-            class="flex items-center gap-2 text-zinc-500 hover:text-zinc-300 transition-colors text-sm"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
-            </svg>
+      <div class="border-t border-[#2a2a2e] py-4 md:py-6">
+        <div class="max-w-6xl mx-auto px-4 md:px-6">
+          <a href="/" class="flex items-center gap-2 text-[#6a6260] hover:text-[#e0aa40] transition-colors text-xs tracking-wider uppercase">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
             Back to Home
           </a>
         </div>
       </div>
     </div>
+
+    <!-- ✅ CLIENT SCRIPT with define:vars - Read-only with hover effects -->
+    <script define:vars={{ goals, habits, inspirations }} client:load>
+      (function() {
+        'use strict';
+        
+        // 1. Data is passed directly via define:vars
+        const goalsData = goals;
+        const habitsData = habits;
+        const inspirationsData = inspirations;
+        
+        console.log('✅ Data loaded (READ-ONLY MODE):', { 
+          goals: goalsData.length, 
+          habits: habitsData.length,
+          inspirations: inspirationsData.length 
+        });
+
+        // 2. Cache DOM Elements
+        const els = {
+          goalsContainer: document.getElementById('goals-container'),
+          habitsContainer: document.getElementById('habits-container'),
+          inspireBtn: document.getElementById('inspire-btn'),
+          inspirationText: document.getElementById('inspiration-text'),
+          categoryBtns: document.querySelectorAll('.category-btn'),
+          progressCircle: document.getElementById('progress-circle'),
+          percentageText: document.getElementById('percentage-text'),
+          completedCount: document.getElementById('completed-count'),
+          remainingCount: document.getElementById('remaining-count'),
+          progressText: document.getElementById('progress-text'),
+          habitsCounter: document.getElementById('habits-counter'),
+        };
+
+        // 3. State
+        let currentFilter = 'all';
+        const circumference = 2 * Math.PI * 40;
+
+        // 4. Render Functions - READ-ONLY but with hover effects
+        function renderGoals(filter) {
+          if (!els.goalsContainer) return;
+          els.goalsContainer.innerHTML = '';
+          
+          const categories = ['travel', 'adventure', 'learning', 'creative', 'food', 'people', 'mind'];
+          const displayNames = {
+            travel: { name: 'Travel & Explore', emoji: '' },
+            adventure: { name: 'Adventure & Thrills', emoji: '🏔' },
+            learning: { name: 'Learning & Growth', emoji: '' },
+            creative: { name: 'Creative & Artistic', emoji: '🎨' },
+            food: { name: 'Food & Culinary', emoji: '🍜' },
+            people: { name: 'People & Relationships', emoji: '🤝' },
+            mind: { name: 'Mind & Spirit', emoji: '🧠' },
+          };
+          
+          const goalsToShow = filter === 'all' ? goalsData : goalsData.filter(g => g.category === filter);
+          
+          if (filter === 'all') {
+            categories.forEach(cat => {
+              const catGoals = goalsToShow.filter(g => g.category === cat);
+              if (catGoals.length === 0) return;
+              renderCategorySection(cat, catGoals, displayNames[cat]);
+            });
+          } else {
+            const info = displayNames[filter] || { name: filter, emoji: '' };
+            renderCategorySection(filter, goalsToShow, info);
+          }
+        }
+        
+        function renderCategorySection(key, goals, display) {
+          const completed = goals.filter(g => g.completed).length;
+          const section = document.createElement('section');
+          section.className = 'mb-12 md:mb-16';
+          section.innerHTML = `
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-[#2a2a2e]">
+              <h2 class="text-xl md:text-2xl font-serif text-white flex items-center gap-3">
+                <span class="text-2xl">${display.emoji}</span>
+                <span>${display.name}</span>
+              </h2>
+              <span class="text-xs text-[#6a6260] font-mono">${completed}/${goals.length}</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-[#2a2a2e]/50 border border-[#2a2a2e] rounded-lg overflow-hidden">
+              ${goals.map((g, i) => `
+                <div class="goal-item flex items-center gap-4 p-4 bg-[#0e0e10]/30 hover:bg-[#121214] transition-all group border-l-2 ${g.completed ? 'border-[#5a9870]/50' : 'border-[#2a2a2e] hover:border-[#e0aa40]'} cursor-pointer select-none">
+                  <span class="text-[10px] text-[#6a6260] font-mono w-6 flex-shrink-0">${String(i + 1).padStart(2, '0')}</span>
+                  <div class="w-4 h-4 border flex-shrink-0 rounded-sm ${g.completed ? 'bg-[#5a9870]/50 border-[#5a9870]/50' : 'border-[#2a2a2e] group-hover:border-[#e0aa40]/50'} flex items-center justify-center">
+                    ${g.completed ? '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#08080a" stroke-width="3"><polyline points="20 6 9 17 4 12" /></svg>' : ''}
+                  </div>
+                  <span class="text-sm flex-1 leading-relaxed ${g.completed ? 'text-[#6a6260] line-through' : 'text-[#ddd6cc] group-hover:text-white'}">${g.text}</span>
+                </div>
+              `).join('')}
+            </div>
+          `;
+          els.goalsContainer.appendChild(section);
+        }
+
+        function renderHabits() {
+          if (!els.habitsContainer) return;
+          els.habitsContainer.innerHTML = '';
+          habitsData.forEach((h, idx) => {
+            const item = document.createElement('div');
+            item.className = `habit-item flex items-center gap-4 p-4 bg-[#0e0e10]/30 hover:bg-[#121214] transition-all group border-l-2 ${h.completed ? 'border-[#5a9870]/50' : 'border-[#2a2a2e] hover:border-[#e0aa40]'} cursor-pointer select-none`;
+            item.innerHTML = `
+              <span class="text-[10px] text-[#6a6260] font-mono w-6 flex-shrink-0">${String(idx + 1).padStart(2, '0')}</span>
+              <div class="w-4 h-4 border flex-shrink-0 rounded-sm ${h.completed ? 'bg-[#5a9870]/50 border-[#5a9870]/50' : 'border-[#2a2a2e] group-hover:border-[#e0aa40]/50'} flex items-center justify-center">
+                ${h.completed ? '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#08080a" stroke-width="3"><polyline points="20 6 9 17 4 12" /></svg>' : ''}
+              </div>
+              <span class="text-sm flex-1 leading-relaxed ${h.completed ? 'text-[#6a6260] line-through' : 'text-[#ddd6cc] group-hover:text-white'}">${h.text}</span>
+            `;
+            els.habitsContainer.appendChild(item);
+          });
+        }
+
+        // 5. Update Functions (only for initial render)
+        function updateProgress() {
+          const completed = goalsData.filter(g => g.completed).length;
+          const total = goalsData.length;
+          const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+          
+          if (els.progressCircle) els.progressCircle.style.strokeDashoffset = circumference - (pct / 100) * circumference;
+          if (els.percentageText) els.percentageText.textContent = pct + '%';
+          if (els.completedCount) els.completedCount.textContent = completed;
+          if (els.remainingCount) els.remainingCount.textContent = total - completed;
+          if (els.progressText) els.progressText.textContent = completed;
+        }
+        
+        function updateHabitsCounter() {
+          const completed = habitsData.filter(h => h.completed).length;
+          if (els.habitsCounter) els.habitsCounter.textContent = `${completed}/${habitsData.length}`;
+        }
+
+        // 6. Category Filter Listeners (STILL WORKS)
+        els.categoryBtns.forEach(btn => {
+          btn.addEventListener('click', function() {
+            currentFilter = this.dataset.category;
+            els.categoryBtns.forEach(b => {
+              const isActive = b.dataset.category === currentFilter;
+              if (isActive) {
+                b.style.backgroundColor = '#e0aa40';
+                b.style.borderColor = '#e0aa40';
+                b.style.color = '#08080a';
+                b.style.fontWeight = '600';
+              } else {
+                b.style.backgroundColor = 'transparent';
+                b.style.borderColor = '#2a2a2e';
+                b.style.color = '#a89e92';
+                b.style.fontWeight = 'normal';
+              }
+            });
+            renderGoals(currentFilter);
+          });
+        });
+        
+        // 7. Inspire Me Listener (STILL WORKS)
+        if (els.inspireBtn && els.inspirationText) {
+          els.inspireBtn.addEventListener('click', function() {
+            if (!inspirationsData || inspirationsData.length === 0) return;
+            if (window._inspireTimeout) clearTimeout(window._inspireTimeout);
+            
+            const quote = inspirationsData[Math.floor(Math.random() * inspirationsData.length)];
+            els.inspirationText.style.transition = 'opacity 300ms ease';
+            els.inspirationText.style.opacity = '0';
+            
+            setTimeout(() => {
+              els.inspirationText.textContent = `"${quote}"`;
+              els.inspirationText.style.opacity = '1';
+              window._inspireTimeout = setTimeout(() => { els.inspirationText.style.opacity = '0'; }, 6000);
+            }, 300);
+          });
+        }
+
+        // 8. Initialize
+        updateProgress();
+        renderGoals('all');
+        renderHabits();
+        console.log('✅ List 100 initialized in READ-ONLY mode with hover effects');
+      })();
+    </script>
   </>
 </BaseLayout>

@@ -2,138 +2,137 @@
 export const familyLineage = [
   {
     generation: 'GREAT GRANDPARENTS',
-    pairs: [
+    subtitle: '4 generations back',
+    members: [
       { 
-        left: { 
-          role: 'GREAT GRANDFATHER (PATERNAL - GRANDFATHER SIDE)', 
-          name: 'Jiuger Yadav', 
-          born: '----', 
-          place: 'Azamgarh, Uttar Pradesh' 
-        },
-        right: { 
-          role: 'GREAT GRANDMOTHER (PATERNAL - GRANDFATHER SIDE)', 
-          name: 'Hubba Yadav', 
-          born: '----', 
-          place: 'Azamgarh, Uttar Pradesh' 
-        }
+        role: 'GREAT GRANDFATHER (PATERNAL)', 
+        name: 'Jiuger Yadav', 
+        born: '----', 
+        place: 'Azamgarh, UP',
+        side: 'paternal'
       },
       { 
-        left: { 
-          role: 'GREAT GRANDFATHER (MATERNAL - GRANDFATHER SIDE)', 
-          name: 'Ratai Yadav', 
-          born: '----', 
-          place: 'Azamgarh, Uttar Pradesh' 
-        },
-        right: { 
-          role: 'GREAT GRANDMOTHER (MATERNAL - GRANDFATHER SIDE)', 
-          name: 'Samunra Yadav', 
-          born: '----', 
-          place: 'Azamgarh, Uttar Pradesh' 
-        }
+        role: 'GREAT GRANDMOTHER (PATERNAL)', 
+        name: 'Hubba Yadav', 
+        born: '----', 
+        place: 'Azamgarh, UP',
+        side: 'paternal'
       },
       { 
-        left: { 
-          role: 'GREAT GRANDFATHER (PATERNAL - GRANDMOTHER SIDE)', 
-          name: '----', 
-          born: '----', 
-          place: 'Azamgarh, Uttar Pradesh' 
-        },
-        right: { 
-          role: 'GREAT GRANDMOTHER (PATERNAL - GRANDMOTHER SIDE)', 
-          name: '----', 
-          born: '----', 
-          place: 'Azamgarh, Uttar Pradesh' 
-        }
+        role: 'GREAT GRANDFATHER (PATERNAL - GM SIDE)', 
+        name: '----', 
+        born: '----', 
+        place: 'Azamgarh, UP',
+        side: 'paternal'
       },
       { 
-        left: { 
-          role: 'GREAT GRANDFATHER (MATERNAL - GRANDMOTHER SIDE)', 
-          name: 'Ram Saran Yadav', 
-          born: '----', 
-          place: 'Azamgarh, Uttar Pradesh' 
-        },
-        right: { 
-          role: 'GREAT GRANDMOTHER (MATERNAL - GRANDMOTHER SIDE)', 
-          name: '----', 
-          born: '----', 
-          place: 'Azamgarh, Uttar Pradesh' 
-        }
+        role: 'GREAT GRANDMOTHER (PATERNAL - GM SIDE)', 
+        name: '----', 
+        born: '----', 
+        place: 'Azamgarh, UP',
+        side: 'paternal'
+      },
+      { 
+        role: 'GREAT GRANDFATHER (MATERNAL)', 
+        name: 'Ratai Yadav', 
+        born: '----', 
+        place: 'Azamgarh, UP',
+        side: 'maternal'
+      },
+      { 
+        role: 'GREAT GRANDMOTHER (MATERNAL)', 
+        name: 'Samunra Yadav', 
+        born: '----', 
+        place: 'Azamgarh, UP',
+        side: 'maternal'
+      },
+      { 
+        role: 'GREAT GRANDFATHER (MATERNAL - GM SIDE)', 
+        name: 'Ram Saran Yadav', 
+        born: '----', 
+        place: 'Azamgarh, UP',
+        side: 'maternal'
+      },
+      { 
+        role: 'GREAT GRANDMOTHER (MATERNAL - GM SIDE)', 
+        name: '----', 
+        born: '----', 
+        place: 'Azamgarh, UP',
+        side: 'maternal'
       }
     ]
   },
   {
-    generation: 'ANCESTORS',
-    pairs: [
+    generation: 'GRANDPARENTS',
+    subtitle: '3 generations back',
+    members: [
       { 
-        left: { 
-          role: 'GRANDFATHER', 
-          name: 'Ladu Ram Yadav', 
-          born: '----', 
-          place: 'Azamgarh, Uttar Pradesh' 
-        },
-        right: { 
-          role: 'MATERNAL GRANDFATHER', 
-          name: 'Ram Awadh Singh', 
-          born: '----', 
-          place: 'Azamgarh, Uttar Pradesh' 
-        }
-      }
-    ]
-  },
-  {
-    generation: 'ANCESTORS',
-    pairs: [
+        role: 'GRANDFATHER (PATERNAL)', 
+        name: 'Ladu Ram Yadav', 
+        born: '----', 
+        place: 'Azamgarh, UP',
+        side: 'paternal'
+      },
       { 
-        left: { 
-          role: 'GRANDMOTHER', 
-          name: 'Dalapati Yadav', 
-          born: '----', 
-          place: 'Azamgarh, Uttar Pradesh' 
-        },
-        right: { 
-          role: 'MATERNAL GRANDMOTHER', 
-          name: 'Subhawati Singh', 
-          born: '----', 
-          place: 'Azamgarh, Uttar Pradesh' 
-        }
+        role: 'GRANDMOTHER (PATERNAL)', 
+        name: 'Dalapati Yadav', 
+        born: '----', 
+        place: 'Azamgarh, UP',
+        side: 'paternal'
+      },
+      { 
+        role: 'GRANDFATHER (MATERNAL)', 
+        name: 'Ram Awadh Singh', 
+        born: '----', 
+        place: 'Azamgarh, UP',
+        side: 'maternal'
+      },
+      { 
+        role: 'GRANDMOTHER (MATERNAL)', 
+        name: 'Subhawati Singh', 
+        born: '----', 
+        place: 'Azamgarh, UP',
+        side: 'maternal'
       }
     ]
   },
   {
     generation: 'PARENTS',
-    pairs: [
+    subtitle: '2 generations back',
+    members: [
       { 
-        left: { 
-          role: 'FATHER', 
-          name: 'Jay Prakash Yadav', 
-          born: '1972', 
-          place: 'Kolkata, West Bengal' 
-        },
-        right: { 
-          role: 'MOTHER', 
-          name: 'Asha Yadav', 
-          born: '1976', 
-          place: 'Kolkata, West Bengal' 
-        }
+        role: 'FATHER', 
+        name: 'Jay Prakash Yadav', 
+        born: '1972', 
+        place: 'Kolkata, West Bengal',
+        side: 'paternal'
+      },
+      { 
+        role: 'MOTHER', 
+        name: 'Asha Yadav', 
+        born: '1976', 
+        place: 'Kolkata, West Bengal',
+        side: 'maternal'
       }
     ]
   },
   {
-    generation: 'ME & SIBLING',
-    pairs: [
+    generation: 'SELF & SIBLINGS',
+    subtitle: 'Present generation',
+    members: [
       { 
-        left: { 
-          role: 'SELF', 
-          name: 'Aditya Yadav', 
-          born: '2004', 
-          place: 'Kolkata, West Bengal' 
-        },
-        right: { 
-          role: 'BROTHER', 
-          name: 'Aryan Yadav', 
-          born: '2008', 
-          place: 'Kolkata, West Bengal' 
-        }
+        role: 'SELF', 
+        name: 'Aditya Yadav', 
+        born: '2004', 
+        place: 'Kolkata, West Bengal',
+        side: 'self'
+      },
+      { 
+        role: 'BROTHER', 
+        name: 'Aryan Yadav', 
+        born: '2008', 
+        place: 'Kolkata, West Bengal',
+        side: 'self'
       }
     ]
   }

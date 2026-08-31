@@ -1,56 +1,123 @@
 ---
-const links = [
-  { label: 'blogs, thoughts', path: 'writings', id: 'writings' },
-  { label: 'projects, experiments', path: 'projects', id: 'projects' },
-  { label: 'photographs', path: 'photos', id: 'photos' }, // 🌼 third spot!
-  { label: 'books, reads', path: 'library', id: 'library' },
-  { label: 'notes & ideas', path: 'notes', id: 'notes' },
-  { label: 'goals, wishes', path: 'list100', id: 'list100' },
-  { label: 'exercise routine', path: 'exercise', id: 'exercise' },
-  { label: 'daily routine', path: 'routine', id: 'routine' },
-  { label: 'computer & gear', path: 'gear', id: 'gear' },
-  { label: 'cool links', path: 'links', id: 'links' },
-  { label: 'progress, achievements', path: 'timeline', id: 'timeline' },
-  { label: 'family tree, lineage', path: 'family-tree', id: 'family-tree' },
-  { label: 'miscellaneous', id: 'misc', path: 'misc' }
+// src/components/ExploreMore.astro
+const linkGroups = [
+  {
+    id: 'create',
+    title: 'Create',
+    tag: 'things I make',
+    items: [
+      { label: 'blogs, thoughts', path: 'writings', name: 'Writings' },
+      { label: 'projects, experiments', path: 'projects', name: 'Projects' },
+      { label: 'photographs', path: 'photos', name: 'Photos' },
+    ]
+  },
+  {
+    id: 'learn',
+    title: 'Learn',
+    tag: 'things I study',
+    items: [
+      { label: 'books, reads', path: 'library', name: 'Library' },
+      { label: 'notes & ideas', path: 'notes', name: 'Notes' },
+      { label: 'goals, wishes', path: 'list100', name: 'List 100' },
+    ]
+  },
+  {
+    id: 'body',
+    title: 'Body',
+    tag: 'taking care of myself',
+    items: [
+      { label: 'exercise routine', path: 'exercise', name: 'Exercise' },
+      { label: 'home training skills', path: 'hometraining', name: 'Home Training' },
+      { label: 'martial arts encyclopedia', path: 'martialarts', name: 'Martial Arts' },
+      { label: 'anatomy & injury guide', path: 'anatomy', name: 'Anatomy' },
+      { label: 'daily routine', path: 'routine', name: 'Daily Routine' },
+    ]
+  },
+  {
+    id: 'mind',
+    title: 'Mind',
+    tag: 'mental training & cognitive mastery',
+    items: [
+      { label: 'universal mastery system', path: 'mind', name: 'Mind Training' },
+    ]
+  },
+  {
+    id: 'tools',
+    title: 'Tools',
+    tag: 'things I use',
+    items: [
+      { label: 'computer & gear', path: 'gear', name: 'Gear' },
+      { label: 'cool links', path: 'links', name: 'Links' },
+      { label: 'progress, achievements', path: 'timeline', name: 'Timeline' },
+    ]
+  },
+  {
+    id: 'roots',
+    title: 'Roots',
+    tag: 'where I come from',
+    items: [
+      { label: 'family tree, lineage', path: 'family-tree', name: 'Family Tree' },
+      { label: 'miscellaneous', path: 'misc', name: 'Misc' },
+    ]
+  }
 ];
 ---
 
 <section
   id="explore"
-  class="py-24 px-6 bg-zinc-950 relative overflow-hidden"
+  class="py-16 md:py-24 px-4 md:px-6 bg-[#08080a] relative overflow-hidden"
   style={{
     backgroundImage: `url('/images/debian_grey_swirl.webp')`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
-    backgroundColor: '#0f0f0f',
+    backgroundColor: '#08080a',
   }}
 >
-  {/* Semi-transparent overlay */}
-  <div class="absolute inset-0 bg-black/60"></div>
+  <div class="absolute inset-0 bg-[#08080a]/80"></div>
 
   <div class="max-w-4xl mx-auto relative z-10">
-    {/* Left-aligned heading & subheading */}
-    <h2 class="text-4xl font-bold mb-2 text-zinc-100 text-left">
+    <h2 class="text-2xl md:text-4xl font-bold mb-2 text-[#ddd6cc] text-left">
       Explore
     </h2>
-    <p class="text-zinc-500 text-sm mb-12 text-left">
-      projects, writings, books, timeline, family, goals, gear, notes, links, fitness, photos, and misc
+    <p class="text-[#a89e92] text-xs md:text-sm mb-8 md:mb-12 text-left">
+      projects, writings, books, timeline, family, goals, gear, notes, links, fitness, mind training, photos, and misc
     </p>
 
-    {/* Left-aligned links */}
-    <div class="space-y-6 text-left">
-      {links.map((link, idx) => (
-        <div key={idx} class="text-lg text-zinc-500 leading-relaxed hover:text-zinc-400 transition-colors">
-          <span>{link.label}</span>
-          <span class="mx-3">–</span>
-          <a
-            href={`/${link.path}`}
-            class="text-zinc-300 underline hover:text-zinc-100 transition-colors"
-          >
-            /{link.path}
-          </a>
+    <div class="flex flex-col">
+      {linkGroups.map((group, index) => (
+        <div class="py-6 md:py-8 border-t border-[#2a2a2e]">
+          <div class="flex items-baseline justify-between gap-2 md:gap-4 mb-3 md:mb-5">
+            <div class="font-serif font-medium text-lg md:text-2xl tracking-tight text-[#ddd6cc] flex items-baseline gap-2 md:gap-3">
+              <span class="font-mono text-[10px] md:text-xs text-[#e0aa40]/80 tracking-wide">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              {group.title}
+            </div>
+            <div class="text-xs md:text-sm text-[#6a6260] italic whitespace-nowrap hidden sm:block">
+              {group.tag}
+            </div>
+          </div>
+
+          <div class="space-y-3 md:space-y-4 text-left">
+            {group.items.map((item, idx) => (
+              <div 
+                key={idx} 
+                class="flex flex-wrap items-baseline gap-x-2 md:gap-x-3 text-sm md:text-lg leading-relaxed transition-colors group"
+              >
+                <a 
+                  href={`/${item.path}`} 
+                  class="font-medium text-[#ddd6cc] underline decoration-[#3a3836] underline-offset-4 hover:text-[#e0aa40] hover:decoration-[#e0aa40] transition-colors"
+                >
+                  {item.name}
+                </a>
+                <span class="text-[#3a3836] select-none">–</span>
+                <span class="text-[#a89e92] group-hover:text-[#ddd6cc] transition-colors">
+                  {item.label}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       ))}
     </div>

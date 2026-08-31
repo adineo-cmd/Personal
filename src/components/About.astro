@@ -17,17 +17,17 @@ const sentences = aboutText
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
-    backgroundColor: '#0f0f0f',
+    backgroundColor: '#08080a',
   }}
 >
   {/* Semi-transparent overlay */}
-  <div class="absolute inset-0 bg-black/60"></div>
+  <div class="absolute inset-0 bg-[#08080a]/80"></div>
 
   {/* Content */}
   <div class="max-w-5xl mx-auto relative z-10">
-    <h2 class="text-3xl font-bold mb-8 text-zinc-200">About</h2>
+    <h2 class="text-3xl font-bold mb-8 text-[#ddd6cc]">About</h2>
     
-    <div class="text-zinc-400 text-base mb-12 leading-relaxed space-y-3">
+    <div class="text-[#a89e92] text-base mb-12 leading-relaxed space-y-3">
       {sentences.map((sentence, index) => (
         <p key={index}>
           {sentence}.
