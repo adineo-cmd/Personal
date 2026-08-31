@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://adineo.neocities.org',
-  trailingSlash: 'never',
+  trailingSlash: 'always',
   integrations: [sitemap()],
   output: 'static',
 });
