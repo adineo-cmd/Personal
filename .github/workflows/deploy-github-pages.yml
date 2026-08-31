@@ -1,19 +1,15 @@
+# .github/workflows/deploy-github-pages.yml
 name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
 
 jobs:
   build:
@@ -25,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22' # ✅ Explicitly set to 22
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
@@ -33,6 +29,8 @@ jobs:
 
       - name: Build for GitHub Pages
         run: npm run build:github
+        env:
+          GITHUB_ACTIONS: 'true'  # ✅ Set this explicitly
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

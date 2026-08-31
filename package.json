@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "build:neocities": "astro build && cp public/robots-neocities.txt dist/robots.txt",
-    "build:github": "astro build && node scripts/fix-gh-pages.js && cp public/robots-github.txt dist/robots.txt",
+    "build:neocities": "DEPLOY_TARGET=neocities astro build && cp public/robots-neocities.txt dist/robots.txt",
+    "build:github": "DEPLOY_TARGET=github astro build && node scripts/fix-gh-pages.js && cp public/robots-github.txt dist/robots.txt",
     "preview": "astro preview"
   },
   "dependencies": {
@@ -20,17 +20,10 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.0"
   },
-  "description": "A minimal, reflective, and deeply personal portfolio built with **Astro**, **Tailwind CSS**, and a love for clean aesthetics.",
-  "main": "tailwind.config.js",
+  "description": "A minimal, reflective, and deeply personal portfolio built with Astro, Tailwind CSS, and a love for clean aesthetics.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/adineo-cmd/personal.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/adineo-cmd/personal/issues"
-  },
-  "homepage": "https://github.com/adineo-cmd/personal#readme"
+  "license": "ISC"
 }
