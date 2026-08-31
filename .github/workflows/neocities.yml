@@ -1,4 +1,3 @@
-# .github/workflows/deploy-neocities.yml
 name: Deploy to Neocities
 
 on:
@@ -10,19 +9,20 @@ on:
       - 'public/**'
       - 'astro.config.mjs'
       - 'package.json'
+      - 'package-lock.json'
   workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '22' # ✅ MUST BE 22
           cache: 'npm'
 
       - name: Install dependencies
@@ -30,8 +30,6 @@ jobs:
 
       - name: Build for Neocities
         run: npm run build:neocities
-        env:
-          GITHUB_ACTIONS: 'false'  # ✅ Explicitly set to false
 
       - name: Deploy to Neocities
         uses: bcomnes/deploy-to-neocities@v3
