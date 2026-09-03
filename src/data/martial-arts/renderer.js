@@ -1,9 +1,18 @@
 // src/data/martial-arts/renderer.js
-import { difficultyLevels } from './index.js';
 
-// 🛡️ Case-insensitive difficulty lookup
+// 🛡️ FIX: Define difficulty levels locally to prevent import errors and circular dependencies
+const difficultyLevels = {
+  beginner: { label: 'Beginner', bg: 'bg-emerald-500/10', text: 'text-emerald-400', border: 'border-emerald-500/30' },
+  intermediate: { label: 'Intermediate', bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/30' },
+  advanced: { label: 'Advanced', bg: 'bg-rose-500/10', text: 'text-rose-400', border: 'border-rose-500/30' },
+  expert: { label: 'Expert', bg: 'bg-purple-500/10', text: 'text-purple-400', border: 'border-purple-500/30' },
+  'all levels': { label: 'All Levels', bg: 'bg-sky-500/10', text: 'text-sky-400', border: 'border-sky-500/30' },
+  'all': { label: 'All Levels', bg: 'bg-sky-500/10', text: 'text-sky-400', border: 'border-sky-500/30' },
+};
+
+// 🛡️ FIX: Case-insensitive difficulty lookup with .trim() to handle trailing spaces in your data
 function getDifficulty(item) {
-  const key = (item.difficulty || 'beginner').toString().toLowerCase();
+  const key = (item.difficulty || 'beginner').toString().toLowerCase().trim();
   return difficultyLevels[key] || difficultyLevels.beginner;
 }
 
@@ -41,12 +50,7 @@ function renderTechniqueCard(item) {
   
   // Universal Tactical Data Block (Handles both camelCase and snake_case)
   const tactical = [];
-  if (item.stance) tactical.push(`<span class="text-[#a89e92] font-bold">Stance:</span> ${item.stance}`);
-  if (item.lineOfAttack || item.line_of_attack) tactical.push(`<span class="text-[#a89e92] font-bold">Line:</span> ${item.lineOfAttack || item.line_of_attack}`);
-  if (item.strikingSurface || item.striking_surface) tactical.push(`<span class="text-[#a89e92] font-bold">Surface:</span> ${item.strikingSurface || item.striking_surface}`);
-  if (item.weightShift || item.weight_shift) tactical.push(`<span class="text-[#a89e92] font-bold">Weight:</span> ${item.weightShift || item.weight_shift}`);
-  if (item.weightDistribution || item.weight_distribution) tactical.push(`<span class="text-[#a89e92] font-bold">Weight Dist:</span> ${item.weightDistribution || item.weight_distribution}`);
-  if (item.stanceShift || item.stance_shifts) tactical.push(`<span class="text-[#a89e92] font-bold">Shift:</span> ${item.stanceShift || item.stance_shifts}`);
+    // Execution, Timing & Movement Dynamics
   if (item.timing) tactical.push(`<span class="text-[#a89e92] font-bold">Timing:</span> ${item.timing}`);
   if (item.recovery) tactical.push(`<span class="text-[#a89e92] font-bold">Recovery:</span> ${item.recovery}`);
   if (item.retraction) tactical.push(`<span class="text-[#a89e92] font-bold">Retract:</span> ${item.retraction}`);
@@ -55,6 +59,29 @@ function renderTechniqueCard(item) {
   if (item.angles) tactical.push(`<span class="text-[#a89e92] font-bold">Angles:</span> ${item.angles}`);
   if (item.pivots) tactical.push(`<span class="text-[#a89e92] font-bold">Pivots:</span> ${item.pivots}`);
   
+  // Biomechanics & Targeting
+  if (item.weightShift) tactical.push(`<span class="text-[#a89e92] font-bold">Weight Shift:</span> ${item.weightShift}`);
+  if (item.lineOfAttack) tactical.push(`<span class="text-[#a89e92] font-bold">Line of Attack:</span> ${item.lineOfAttack}`);
+  if (item.strikingSurface) tactical.push(`<span class="text-[#a89e92] font-bold">Striking Surface:</span> ${item.strikingSurface}`);
+  if (item.stance) tactical.push(`<span class="text-[#a89e92] font-bold">Stance:</span> ${item.stance}`);
+  if (item.stanceShift) tactical.push(`<span class="text-[#a89e92] font-bold">Stance Shift:</span> ${item.stanceShift}`);
+  if (item.weightDistribution) tactical.push(`<span class="text-[#a89e92] font-bold">Weight Dist:</span> ${item.weightDistribution}`);
+  
+  // Grappling & Weapons Specifics
+  if (item.grips) tactical.push(`<span class="text-[#a89e92] font-bold">Grips:</span> ${item.grips}`);
+  if (item.leveragePoints) tactical.push(`<span class="text-[#a89e92] font-bold">Leverage:</span> ${item.leveragePoints}`);
+  if (item.finish) tactical.push(`<span class="text-[#a89e92] font-bold">Finish:</span> ${item.finish}`);
+  
+  // Conditioning Metrics
+  if (item.setsReps) tactical.push(`<span class="text-[#a89e92] font-bold">Sets/Reps:</span> ${item.setsReps}`);
+  if (item.workRest) tactical.push(`<span class="text-[#a89e92] font-bold">Work/Rest:</span> ${item.workRest}`);
+  if (item.duration) tactical.push(`<span class="text-[#a89e92] font-bold">Duration:</span> ${item.duration}`);
+  if (item.intensity) tactical.push(`<span class="text-[#a89e92] font-bold">Intensity:</span> ${item.intensity}`);
+  if (item.rest) tactical.push(`<span class="text-[#a89e92] font-bold">Rest:</span> ${item.rest}`);
+
+  // 🚀 NEW: Context Application (Highly relevant for Meta & Recovery data)
+  if (item.contextApplication) tactical.push(`<span class="text-[#a89e92] font-bold">Context:</span> ${item.contextApplication}`);
+
   const defenseText = item.defenseAgainst || item.defense_against;
   if (defenseText && defenseText !== 'N/A') tactical.push(`<span class="text-[#a89e92] font-bold">Defends:</span> ${defenseText}`);
   
@@ -99,6 +126,7 @@ function renderTechniqueCard(item) {
         ${focusText ? `<div class="flex gap-2"><span>🎯</span> <span class="text-[#a89e92]">${focusText}</span></div>` : ''}
         ${progArr.length ? `<div class="flex gap-2"><span>📈</span> <span class="text-[#a89e92]">${progArr.join(' → ')}</span></div>` : ''}
         ${item.transitions ? `<div class="flex gap-2"><span>🔀</span> <span class="text-[#a89e92]">Transitions: ${item.transitions}</span></div>` : ''}
+        ${item.reflectionQuestion ? `<div class="flex gap-2 text-[#e0aa40]/90"><span>🤔</span> <span class="italic">"${item.reflectionQuestion}"</span></div>` : ''}
         ${item.safety ? `<div class="flex gap-2 text-[#e0aa40]/80"><span>⚠️</span> <span>${item.safety}</span></div>` : ''}
       </div>
     </div>
@@ -211,8 +239,8 @@ function renderTrainingDrillCard(name, item) {
 }
 
 export function renderStylePage(styleData) {
-  const { curriculum, keyPrinciples, color } = styleData;
-  const html = { principles: '', toc: '', techniques: '', physical: '', knowledge: '', equipment: '', drills: '', tips: '' };
+  const { curriculum, keyPrinciples, color, precision, meta, recovery } = styleData;
+  const html = { principles: '', toc: '', techniques: '', precision: '', meta: '', recovery: '', physical: '', knowledge: '', equipment: '', drills: '', tips: '' };
 
   if (keyPrinciples && keyPrinciples.length > 0) {
     let str = '<div class="mt-6 pt-4 border-t border-[#2a2a2e]"><div class="text-[11px] font-medium text-[#a89e92] mb-2">Core Principles</div><div class="flex flex-wrap gap-2">';
@@ -222,6 +250,28 @@ export function renderStylePage(styleData) {
 
   const tocItems = [];
   if (curriculum?.techniques && Object.values(curriculum.techniques).some(arr => arr?.length)) tocItems.push({ id: 'techniques', label: 'Techniques', icon: '🥋' });
+  
+  // 🚀 FIXED TOC ITEMS (Handles nested data structures safely)
+  if (precision) {
+    const hasPrecision = Object.values(precision).some(arr => Array.isArray(arr) && arr.length > 0);
+    if (hasPrecision) tocItems.push({ id: 'precision-section', label: 'Precision Combat', icon: '🎯' });
+  }
+  
+  if (meta) {
+    const metaData = meta.metaLayersData || meta;
+    const layers = metaData.layers || metaData;
+    const hasMeta = layers && typeof layers === 'object' && Object.values(layers).some(arr => Array.isArray(arr) && arr.length > 0);
+    if (hasMeta) tocItems.push({ id: 'meta-section', label: 'Meta-Layers', icon: '🧠' });
+  }
+  
+  if (recovery) {
+    const recData = recovery.recoveryData || recovery;
+    const protocols = recData.protocols || recData;
+    if (Array.isArray(protocols) && protocols.length > 0) {
+      tocItems.push({ id: 'recovery-section', label: 'Recovery Systems', icon: '🔄' });
+    }
+  }
+
   if (curriculum?.physicalTraining && Object.values(curriculum.physicalTraining).some(arr => arr?.length)) tocItems.push({ id: 'physical', label: 'Physical', icon: '🏋️' });
   if (curriculum?.knowledge && Object.values(curriculum.knowledge).some(arr => arr?.length)) tocItems.push({ id: 'knowledge', label: 'Knowledge', icon: '📖' });
   if (curriculum?.equipment && Object.values(curriculum.equipment).some(arr => arr?.length)) tocItems.push({ id: 'equipment', label: 'Equipment', icon: '🥊' });
@@ -244,6 +294,50 @@ export function renderStylePage(styleData) {
         str += '</div></div>';
       });
       html.techniques = str + '</section>';
+    }
+  }
+
+  // 🚀 PRECISION COMBAT
+  if (precision) {
+    const entries = Object.entries(precision).filter(e => e[1] && Array.isArray(e[1]) && e[1].length);
+    if (entries.length > 0) {
+      let str = '<section id="precision-section" class="scroll-mt-32"><div class="flex items-center gap-2 mb-6 pb-3 border-b border-[#2a2a2e]"><span class="text-2xl">🎯</span><h2 class="text-2xl font-medium text-[#ddd6cc]">Precision Combat</h2></div>';
+      entries.forEach(entry => {
+        const title = entry[0].replace('precision', '').replace('Data', '');
+        str += `<div class="mb-8"><h3 class="text-lg font-medium text-[#ddd6cc] mb-4 capitalize">${formatTitle(title)}</h3><div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">`;
+        entry[1].forEach(item => { str += `<div>${renderTechniqueCard(item)}</div>`; });
+        str += '</div></div>';
+      });
+      html.precision = str + '</section>';
+    }
+  }
+
+  // 🚀 META-LAYERS (FIXED UNWRAPPING)
+  if (meta) {
+    const metaData = meta.metaLayersData || meta;
+    const layers = metaData.layers || metaData;
+    const entries = Object.entries(layers).filter(e => e[1] && Array.isArray(e[1]) && e[1].length);
+    if (entries.length > 0) {
+      let str = '<section id="meta-section" class="scroll-mt-32"><div class="flex items-center gap-2 mb-6 pb-3 border-b border-[#2a2a2e]"><span class="text-2xl">🧠</span><h2 class="text-2xl font-medium text-[#ddd6cc]">Meta-Layers</h2></div>';
+      entries.forEach(entry => {
+        str += `<div class="mb-8"><h3 class="text-lg font-medium text-[#ddd6cc] mb-4 capitalize">${formatTitle(entry[0])}</h3><div class="grid gap-4 md:grid-cols-2">`;
+        entry[1].forEach(item => { str += `<div>${renderTechniqueCard(item)}</div>`; });
+        str += '</div></div>';
+      });
+      html.meta = str + '</section>';
+    }
+  }
+
+  // 🚀 RECOVERY SYSTEMS (FIXED UNWRAPPING)
+  if (recovery) {
+    const recData = recovery.recoveryData || recovery;
+    const protocols = recData.protocols || recData;
+    if (Array.isArray(protocols) && protocols.length > 0) {
+      let str = '<section id="recovery-section" class="scroll-mt-32"><div class="flex items-center gap-2 mb-6 pb-3 border-b border-[#2a2a2e]"><span class="text-2xl">🔄</span><h2 class="text-2xl font-medium text-[#ddd6cc]">Recovery Systems</h2></div>';
+      str += '<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">';
+      protocols.forEach(item => { str += `<div>${renderTechniqueCard(item)}</div>`; });
+      str += '</div></section>';
+      html.recovery = str;
     }
   }
 

@@ -1,39 +1,39 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageNav from '../../components/PageNavigation.astro';
-import { martialArtsRegistry } from '../../data/martial-arts/index.js';
-import { renderStylePage } from '../../data/martial-arts/renderer.js';
+import { mobilityFlexibilityRegistry } from '../../data/mobility-flexibility/index.js';
+import { renderSystemPage } from '../../data/mobility-flexibility/renderer.js';
 
 export async function getStaticPaths() {
-  return martialArtsRegistry.map(style => ({
-    params: { style: style.id },
-    props: { styleData: style }
+  return mobilityFlexibilityRegistry.map(system => ({
+    params: { system: system.id },
+    props: { systemData: system }
   }));
 }
 
-const { styleData } = Astro.props;
-const { html } = renderStylePage(styleData);
+const { systemData } = Astro.props;
+const { html } = renderSystemPage(systemData);
 ---
 
-<BaseLayout title={`${styleData.name} Curriculum`} description={styleData.description}>
-    <PageNav currentPage="martialarts" />
+<BaseLayout title={`${systemData.name} Framework`} description={systemData.description}>
+    <PageNav currentPage="mobility" />
 
     <div class="min-h-screen bg-[#08080a]">
       <div class="text-[#a89e92] py-16 px-6" style="font-family: 'Courier New', Courier, monospace;">
         <div class="max-w-7xl mx-auto">
           
           <div class="mb-8 pb-6 border-b border-[#2a2a2e]">
-            <a href="/martialarts" class="text-xs text-[#6a6260] hover:text-[#e0aa40] mb-4 inline-flex items-center gap-1 transition-colors">
+            <a href="/mobility" class="text-xs text-[#6a6260] hover:text-[#e0aa40] mb-4 inline-flex items-center gap-1 transition-colors">
               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
               Back to Directory
             </a>
             
             <div class="flex items-start gap-4">
-              <span class="text-4xl bg-[#0e0e10] p-3 rounded-lg border border-[#2a2a2e]">{styleData.icon}</span>
+              <span class="text-4xl bg-[#0e0e10] p-3 rounded-lg border border-[#2a2a2e]">{systemData.icon}</span>
               <div>
-                <h1 class="text-4xl font-serif text-white mb-2">{styleData.name}</h1>
-                <p class="text-sm text-[#6a6260] mb-3 font-mono">{styleData.origin}</p>
-                <p class="text-[#a89e92] text-sm leading-relaxed max-w-2xl">{styleData.description}</p>
+                <h1 class="text-4xl font-serif text-white mb-2">{systemData.name}</h1>
+                <p class="text-sm text-[#6a6260] mb-3 font-mono">{systemData.origin}</p>
+                <p class="text-[#a89e92] text-sm leading-relaxed max-w-2xl">{systemData.description}</p>
               </div>
             </div>
             
@@ -44,14 +44,12 @@ const { html } = renderStylePage(styleData);
 
           <main class="space-y-16">
             <div set:html={html.techniques || ''}></div>
-            <div set:html={html.precision || ''}></div>
-            <div set:html={html.meta || ''}></div>
-            <div set:html={html.recovery || ''}></div>
-            <div set:html={html.physical || ''}></div>
-            <div set:html={html.knowledge || ''}></div>
-            <div set:html={html.equipment || ''}></div>
-            <div set:html={html.drills || ''}></div>
-            <div set:html={html.tips || ''}></div>
+            <div set:html={html.assessments || ''}></div>
+            <div set:html={html.periodization || ''}></div>
+            <div set:html={html.templates || ''}></div>
+            <div set:html={html.prescriptions || ''}></div>
+            <div set:html={html.integration || ''}></div>
+            <div set:html={html.tracking || ''}></div>
           </main>
         </div>
       </div>
