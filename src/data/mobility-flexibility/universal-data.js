@@ -9,7 +9,7 @@
 
 const universalMobilityData = {
   id: "universal-mobility-system",
-  name: " Mobility System",
+  name: "Mobility",
   icon: "🦴",
   origin: "Synthesized from FRC, CARs, Yoga, Gymnastics, Physical Therapy, Martial Arts & Movement Science",
   description: "A comprehensive mobility framework integrating the most effective techniques from Functional Range Conditioning, Controlled Articular Rotations, yoga, gymnastics, physical therapy, and combat sports. Designed for adaptability across sport performance, injury prevention, daily function, and longevity. Emphasizes progressive overload of joint range, end-range strength, and contextual application from beginner to mastery.",
@@ -401,7 +401,7 @@ export { universalMobilityData };
 
 const universalFlexibilityData = {
   id: "universal-flexibility-system",
-  name: "Flexibility System",
+  name: "Flexibility",
   icon: "🤸",
   origin: "Synthesized from Yoga, Gymnastics, Dance, Contortion, Physical Therapy, Martial Arts & Sport Science",
   description: "A comprehensive flexibility framework integrating the most effective stretching methods from yoga, gymnastics, dance, contortion arts, physical therapy, and combat sports. Covers static, dynamic, PNF, loaded, and end-range flexibility with complete progressions from beginner to contortion-level mastery. Designed for sport performance, injury prevention, daily function, and longevity.",
